@@ -67,10 +67,17 @@
 
                                 <td>
 
-
-                                    <button type="button" class="btn btn-danger btn-sm">
+                                    <template v-if="categoria.condicion">
+                                    <button type="button" class="btn btn-danger btn-sm" @click="desactivarCategoria(categoria.id)">
                                         <i class="fa fa-lock fa-2x"></i> Desactivar
                                     </button>
+                                    </template>
+
+                                    <template v-else>
+                                    <button type="button" class="btn btn-success btn-sm" @click="activarCategoria(categoria.id)">
+                                        <i class="fa fa-lock fa-2x"></i> Activar
+                                    </button>
+                                    </template>
 
                                 </td>
                             </tr>
@@ -241,6 +248,106 @@
                 }).catch(function (error) {
                     console.log(error);
                 });
+            },
+
+            desactivarCategoria(id){
+
+                const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger'
+                },
+                buttonsStyling: false
+                })
+
+                swalWithBootstrapButtons.fire({
+                title: '¿Estas seguro de desactivar la categoria?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: '<i class="fa fa-check fa-2x"></i> Aceptar',
+                cancelButtonText: '<i class="fa fa-times fa-2x"></i> Cancelar',
+                reverseButtons: true
+                }).then((result) => {
+                if (result.isConfirmed) {
+
+                    let me=this;
+
+                axios.put('/categoria/desactivar',{
+
+                    'id':id
+
+                }).then(function (response) {
+                     //console.log(response);
+                     me.listarCategoria();
+
+                     swalWithBootstrapButtons.fire(
+                    'Desactivado',
+                    'El registro de categoria ha sido desactivado',
+                    'success'
+                    )
+
+                }).catch(function (error) {
+                    console.log(error);
+                });
+
+
+                } else if (
+                    /* Read more about handling dismissals below */
+                    result.dismiss === Swal.DismissReason.cancel
+                ) {
+
+                }
+                })
+            },
+
+            activarCategoria(id){
+
+                const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger'
+                },
+                buttonsStyling: false
+                })
+
+                swalWithBootstrapButtons.fire({
+                title: '¿Estas seguro de activar la categoria?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: '<i class="fa fa-check fa-2x"></i> Aceptar',
+                cancelButtonText: '<i class="fa fa-times fa-2x"></i> Cancelar',
+                reverseButtons: true
+                }).then((result) => {
+                if (result.isConfirmed) {
+
+                    let me=this;
+
+                axios.put('/categoria/activar',{
+
+                    'id':id
+
+                }).then(function (response) {
+                     //console.log(response);
+                     me.listarCategoria();
+
+                     swalWithBootstrapButtons.fire(
+                    'Activado',
+                    'El registro de categoria ha sido activado',
+                    'success'
+                    )
+
+                }).catch(function (error) {
+                    console.log(error);
+                });
+
+
+                } else if (
+                    /* Read more about handling dismissals below */
+                    result.dismiss === Swal.DismissReason.cancel
+                ) {
+
+                }
+                })
             },
 
             validarCategoria(){

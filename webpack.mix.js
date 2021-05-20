@@ -17,11 +17,12 @@ mix.styles([
     'resources/plantilla/css/style.css'
 ], 'public/css/plantilla.css')
 .scripts([
-    'resources/js/jquery.min.js',
-    'resources/js/popper.min.js',
-    'resources/js/bootstrap.min.js',
-    'resources/js/Chart.min.js',
-    'resources/js/pace.min.js',
-    'resources/js/template.js'
+    'resources/plantilla/js/jquery.min.js',
+    'resources/plantilla/js/popper.min.js',
+    'resources/plantilla/js/bootstrap.min.js',
+    'resources/plantilla/js/Chart.min.js',
+    'resources/plantilla/js/pace.min.js',
+    'resources/plantilla/js/template.js',
+    'resources/plantilla/js/sweetalert2.all.min.js'
 ], 'public/js/plantilla.js')
 .js(['resources/js/app.js'],'public/js/app.js').vue();

@@ -2009,6 +2009,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -2068,6 +2075,74 @@ __webpack_require__.r(__webpack_exports__);
         me.listarCategoria();
       })["catch"](function (error) {
         console.log(error);
+      });
+    },
+    desactivarCategoria: function desactivarCategoria(id) {
+      var _this = this;
+
+      var swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+          confirmButton: 'btn btn-success',
+          cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+      });
+      swalWithBootstrapButtons.fire({
+        title: '¿Estas seguro de desactivar la categoria?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '<i class="fa fa-check fa-2x"></i> Aceptar',
+        cancelButtonText: '<i class="fa fa-times fa-2x"></i> Cancelar',
+        reverseButtons: true
+      }).then(function (result) {
+        if (result.isConfirmed) {
+          var me = _this;
+          axios.put('/categoria/desactivar', {
+            'id': id
+          }).then(function (response) {
+            //console.log(response);
+            me.listarCategoria();
+            swalWithBootstrapButtons.fire('Desactivado', 'El registro de categoria ha sido desactivado', 'success');
+          })["catch"](function (error) {
+            console.log(error);
+          });
+        } else if (
+        /* Read more about handling dismissals below */
+        result.dismiss === Swal.DismissReason.cancel) {}
+      });
+    },
+    activarCategoria: function activarCategoria(id) {
+      var _this2 = this;
+
+      var swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+          confirmButton: 'btn btn-success',
+          cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+      });
+      swalWithBootstrapButtons.fire({
+        title: '¿Estas seguro de activar la categoria?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '<i class="fa fa-check fa-2x"></i> Aceptar',
+        cancelButtonText: '<i class="fa fa-times fa-2x"></i> Cancelar',
+        reverseButtons: true
+      }).then(function (result) {
+        if (result.isConfirmed) {
+          var me = _this2;
+          axios.put('/categoria/activar', {
+            'id': id
+          }).then(function (response) {
+            //console.log(response);
+            me.listarCategoria();
+            swalWithBootstrapButtons.fire('Activado', 'El registro de categoria ha sido activado', 'success');
+          })["catch"](function (error) {
+            console.log(error);
+          });
+        } else if (
+        /* Read more about handling dismissals below */
+        result.dismiss === Swal.DismissReason.cancel) {}
       });
     },
     validarCategoria: function validarCategoria() {
@@ -19872,7 +19947,55 @@ var render = function() {
                       _vm._v("  \n                             ")
                     ]),
                     _vm._v(" "),
-                    _vm._m(3, true)
+                    _c(
+                      "td",
+                      [
+                        categoria.condicion
+                          ? [
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-danger btn-sm",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.desactivarCategoria(
+                                        categoria.id
+                                      )
+                                    }
+                                  }
+                                },
+                                [
+                                  _c("i", { staticClass: "fa fa-lock fa-2x" }),
+                                  _vm._v(
+                                    " Desactivar\n                                 "
+                                  )
+                                ]
+                              )
+                            ]
+                          : [
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-success btn-sm",
+                                  attrs: { type: "button" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.activarCategoria(categoria.id)
+                                    }
+                                  }
+                                },
+                                [
+                                  _c("i", { staticClass: "fa fa-lock fa-2x" }),
+                                  _vm._v(
+                                    " Activar\n                                 "
+                                  )
+                                ]
+                              )
+                            ]
+                      ],
+                      2
+                    )
                   ])
                 }),
                 0
@@ -19880,7 +20003,7 @@ var render = function() {
             ]
           ),
           _vm._v(" "),
-          _vm._m(4)
+          _vm._m(3)
         ])
       ])
     ]),
@@ -20172,21 +20295,6 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Cambiar Estado")])
       ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("td", [
-      _c(
-        "button",
-        { staticClass: "btn btn-danger btn-sm", attrs: { type: "button" } },
-        [
-          _c("i", { staticClass: "fa fa-lock fa-2x" }),
-          _vm._v(" Desactivar\n                                 ")
-        ]
-      )
     ])
   },
   function() {
