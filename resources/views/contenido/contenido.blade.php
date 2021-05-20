@@ -2,11 +2,11 @@
 @section('contenido')
 
  <template v-if="menu==0">
-    <categoria></categoria>
+    <h1> Hello there! </h1>
  </template>
 
  <template v-if="menu==1">
-    <h1>contenido 1</h1>
+    <categoria></categoria>
  </template>
 
  <template v-if="menu==2">
