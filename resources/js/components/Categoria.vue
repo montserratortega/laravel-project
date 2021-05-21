@@ -19,12 +19,12 @@
                     <div class="form-group row">
                         <div class="col-md-6">
                             <div class="input-group">
-                                <select class="form-control col-md-3">
-                        <option value="nombre">Categoría</option>
+                                <select class="form-control col-md-3" v-model="criterio">
+                                    <option value="nombre">Categoría</option>
                                     <option value="descripcion">Descripción</option>
                                 </select>
-                                <input type="text" class="form-control" placeholder="Buscar texto">
-                                <button type="submit"  class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
+                                <input type="text" @keyup.enter="listarCategoria(1,buscar,criterio);" v-model="buscar" class="form-control" placeholder="Buscar texto">
+                                <button type="submit" @click="listarCategoria(1,buscar,criterio);" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
                             </div>
                         </div>
                     </div>
@@ -87,13 +87,13 @@
                     <nav>
                         <ul class="pagination">
                             <li class="page-item" v-f="pagination.current_page > 1">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1)">Anterior</a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page - 1,buscar,criterio)">Anterior</a>
                             </li>
                             <li class="page-item" v-for="page in pagesNumber" :key="page" :class="[page == isActived ? 'active' : '']">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(page)" v-text="page"></a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar,criterio)" v-text="page"></a>
                             </li>
                             <li class="page-item" v-if="pagination.current_page < pagination.last_page">
-                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1)">Siguiente</a>
+                                <a class="page-link" href="#" @click.prevent="cambiarPagina(pagination.current_page + 1,buscar,criterio)">Siguiente</a>
                             </li>
                         </ul>
                     </nav>
@@ -181,7 +181,9 @@
                     'from':0,
                     'to':0
                 },
-                offset:3
+                offset:3,
+                criterio:'nombre',
+                buscar:''
             }
         },
 
@@ -222,10 +224,10 @@
         },
 
         methods: {
-            listarCategoria(page){
+            listarCategoria(page,buscar,criterio){
                 let me = this;
 
-                var url= '/categoria?page=' + page;
+                var url= '/categoria?page=' + page + '&buscar=' + buscar + '&criterio=' + criterio;
 
                 axios.get(url).then(function (response) {
                         // handle success
@@ -240,13 +242,13 @@
                 });
             },
 
-            cambiarPagina(page){
+            cambiarPagina(page,buscar,criterio){
 
                 let me = this;
                 //Actualiza pagina actual
                 me.pagination.current_page=page;
 
-                me.listarCategoria(page);
+                me.listarCategoria(page,buscar,criterio);
             },
 
             registrarCategoria(){
@@ -265,8 +267,8 @@
 
                 }).then(function (response) {
                      //console.log(response);
-                     me.cerrarModal();
-                     me.listarCategoria();
+                     me.cerrarModal()
+                     me.listarCategoria(1,'','nombre');
 
                 }).catch(function (error) {
                     console.log(error);
@@ -294,7 +296,7 @@
                 }).then(function (response) {
                      //console.log(response);
                      me.cerrarModal();
-                     me.listarCategoria();
+                     me.listarCategoria(1,'','nombre');
 
                 }).catch(function (error) {
                     console.log(error);
@@ -329,7 +331,7 @@
 
                 }).then(function (response) {
                      //console.log(response);
-                     me.listarCategoria();
+                     me.listarCategoria(1,'','nombre');
 
                      swalWithBootstrapButtons.fire(
                     'Desactivado',
@@ -379,7 +381,7 @@
 
                 }).then(function (response) {
                      //console.log(response);
-                     me.listarCategoria();
+                     me.listarCategoria(1,'','nombre');
 
                      swalWithBootstrapButtons.fire(
                     'Activado',
@@ -433,10 +435,11 @@
                                 case "registrar":
                                     {
                                         this.modal=1;
-                                        this.tituloModal="Registar Categoria";
+                                        this.tituloModal="Registrar Categoria";
                                         this.nombre="";
                                         this.descripcion="";
                                         this.tipoAccion=1;
+                                        break;
 
                                     }
 
@@ -449,6 +452,7 @@
                                         this.categoria_id=data["id"];
                                         this.nombre=data["nombre"];
                                         this.descripcion=data["descripcion"];
+                                        break;
 
                                     }
                             }
@@ -458,7 +462,7 @@
         },
         mounted() {
             //console.log('Component mounted.')
-            this.listarCategoria();
+            this.listarCategoria(1,this.buscar,this.criterio);
         }
     }
 </script>
