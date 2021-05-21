@@ -119,11 +119,11 @@
 
                     <div class="modal-body">
 
-                        <div v-show="errorCategoria" class="form-group row div-error">
+                        <div v-show="errorProducto" class="form-group row div-error">
 
                             <div class="text-center text-error">
 
-                                <div v-for="error in errorMostrarMsjCategoria" :key="error" v-text="error"></div>
+                                <div v-for="error in errorMostrarMsjProducto" :key="error" v-text="error"></div>
 
                             </div>
 
@@ -132,19 +132,60 @@
 
                         <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
                             <div class="form-group row">
-                                <label class="col-md-3 form-control-label" for="text-input">Categoría</label>
-                                <div class="col-md-9">
-                                    <input type="text" v-model="nombre" class="form-control" placeholder="Nombre de categoría">
+                                    <label class="col-md-3 form-control-label" for="text-input">Categoria</label>
+                                    <div class="col-md-9">
 
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-md-3 form-control-label" for="email-input">Descripción</label>
-                                <div class="col-md-9">
-                                <input type="email" v-model="descripcion" class="form-control" placeholder="Ingrese descripcion">
-                                </div>
-                            </div>
+                                        <!--la variable idcategoria asociado a v-model la asignamos
+                                        en la propiedad data en javascript (ver al final) -->
 
+                                        <select class="form-control" v-model="idcategoria">
+
+                                          <!-- el id y nombre asociado en el objeto categoria vienen de los campos
+                                          de la tabla categorias de la bd-->
+                                          <option value="0" disabled>Seleccione</option>
+                                          <!--el arrayCategoria es una variable de la data javascript de vue
+                                          y se cargan los registros de la categoria una vez se abra la ventana
+                                          modal-->
+                                          <option v-for="categoria in arrayCategoria" :key="categoria.id" :value="categoria.id" v-text="categoria.nombre"></option>
+
+                                        </select>
+
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group row">
+                                    <label class="col-md-3 form-control-label" for="text-input">Codigo</label>
+                                    <div class="col-md-9">
+                                        <input type="text" v-model="codigo" class="form-control" placeholder="Codigo de barras">
+
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group row">
+                                    <label class="col-md-3 form-control-label" for="text-input">Producto</label>
+                                    <div class="col-md-9">
+                                        <input type="text" v-model="nombre" class="form-control" placeholder="Nombre del producto">
+
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-md-3 form-control-label" for="text-input">Precio Venta</label>
+                                    <div class="col-md-9">
+                                        <input type="number" v-model="precio_venta" class="form-control" placeholder="">
+
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-md-3 form-control-label" for="text-input">Stock</label>
+                                    <div class="col-md-9">
+                                        <input type="number" v-model="stock" class="form-control" placeholder="">
+
+                                    </div>
+                                </div>
 
                         </form>
                     </div>
@@ -170,6 +211,8 @@
             return {
                 producto_id:0,
                 idcategoria:0,
+                nombre_categoria:'',
+                codigo:'',
                 nombre:'',
                 precio_venta:0,
                 stock:0,
@@ -190,7 +233,8 @@
                 },
                 offset:3,
                 criterio:'nombre',
-                buscar:''
+                buscar:'',
+                arrayCategoria:[]
             }
         },
 
@@ -242,6 +286,24 @@
                         var respuesta = response.data;
                         me.arrayProducto=respuesta.productos.data;
                         me.pagination=respuesta.pagination;
+                    })
+                    .catch(function (error) {
+                        // handle error
+                        console.log(error);
+                });
+            },
+
+            selectCategoria(){
+
+                let me = this;
+
+                var url= '/categoria/selectCategoria';
+
+                axios.get(url).then(function (response) {
+                        // handle success
+                        //console.log(response);
+                        var respuesta = response.data;
+                        me.arrayCategoria=respuesta.categorias;
                     })
                     .catch(function (error) {
                         // handle error
@@ -433,7 +495,7 @@
             abrirModal(modelo,accion,data=[]){
 
                 switch(modelo){
-                    case "categoria":
+                    case "producto":
 
                         {
                             switch(accion){
@@ -441,7 +503,7 @@
                                 case "registrar":
                                     {
                                         this.modal=1;
-                                        this.tituloModal="Registrar Categoria";
+                                        this.tituloModal="Registrar Producto";
                                         this.nombre="";
                                         this.descripcion="";
                                         this.tipoAccion=1;
@@ -453,7 +515,7 @@
                                     {
                                         //console.log(data);
                                         this.modal=1;
-                                        this.tituloModal="Editar Categoria";
+                                        this.tituloModal="Editar Producto";
                                         this.tipoAccion=2;
                                         this.categoria_id=data["id"];
                                         this.nombre=data["nombre"];
@@ -464,8 +526,10 @@
                             }
                         }
                 }
+                this.selectCategoria();
             }
         },
+
         mounted() {
             //console.log('Component mounted.')
             this.listarProducto(1,this.buscar,this.criterio);
