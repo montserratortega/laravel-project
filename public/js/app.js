@@ -2458,6 +2458,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -2492,6 +2498,7 @@ __webpack_require__.r(__webpack_exports__);
     isActived: function isActived() {
       return this.pagination.current_page;
     },
+    //calcula los elementos de la paginacion
     pagesNumber: function pagesNumber() {
       if (!this.pagination.to) {
         return [];
@@ -2548,25 +2555,30 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     cambiarPagina: function cambiarPagina(page, buscar, criterio) {
-      var me = this; //Actualiza pagina actual
+      var me = this; //Actualiza  la pagina actual
 
       me.pagination.current_page = page;
       me.listarProducto(page, buscar, criterio);
     },
-    registrarCategoria: function registrarCategoria() {
-      if (this.validarCategoria()) {
+    registrarProducto: function registrarProducto() {
+      if (this.validarProducto()) {
         return;
       }
 
       var me = this;
-      axios.post('/categoria/registrar', {
-        'nombre': this.nombre,
-        'descripcion': this.descripcion
+      axios.post('/producto/registrar', {
+        "idcategoria": this.idcategoria,
+        "codigo": this.codigo,
+        "nombre": this.nombre,
+        "stock": this.stock,
+        "precio_venta": this.precio_venta
       }).then(function (response) {
+        // handle success
         //console.log(response);
         me.cerrarModal();
-        me.listarCategoria(1, '', 'nombre');
+        me.listarProducto(1, '', 'nombre');
       })["catch"](function (error) {
+        // handle error
         console.log(error);
       });
     },
@@ -2581,10 +2593,12 @@ __webpack_require__.r(__webpack_exports__);
         'descripcion': this.descripcion,
         'id': this.categoria_id
       }).then(function (response) {
+        // handle success
         //console.log(response);
         me.cerrarModal();
         me.listarCategoria(1, '', 'nombre');
       })["catch"](function (error) {
+        // handle error
         console.log(error);
       });
     },
@@ -2592,33 +2606,32 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       var swalWithBootstrapButtons = Swal.mixin({
-        customClass: {
-          confirmButton: 'btn btn-success',
-          cancelButton: 'btn btn-danger'
-        },
+        confirmButtonClass: 'btn btn-success',
+        cancelButtonClass: 'btn btn-danger',
         buttonsStyling: false
       });
-      swalWithBootstrapButtons.fire({
-        title: '¿Estas seguro de desactivar la categoria?',
-        icon: 'warning',
+      swalWithBootstrapButtons({
+        title: 'Estas seguro de desactivar la categoria?',
+        //type: 'warning',
         showCancelButton: true,
         confirmButtonText: '<i class="fa fa-check fa-2x"></i> Aceptar',
         cancelButtonText: '<i class="fa fa-times fa-2x"></i> Cancelar',
         reverseButtons: true
       }).then(function (result) {
-        if (result.isConfirmed) {
+        if (result.value) {
           var me = _this;
           axios.put('/categoria/desactivar', {
             'id': id
           }).then(function (response) {
+            // handle success
             //console.log(response);
             me.listarCategoria(1, '', 'nombre');
-            swalWithBootstrapButtons.fire('Desactivado', 'El registro de categoria ha sido desactivado', 'success');
+            swalWithBootstrapButtons('Desactivado!', 'El registro ha sido desactivado con exito.', 'success');
           })["catch"](function (error) {
+            // handle error
             console.log(error);
           });
-        } else if (
-        /* Read more about handling dismissals below */
+        } else if ( // Read more about handling dismissals
         result.dismiss === Swal.DismissReason.cancel) {}
       });
     },
@@ -2626,47 +2639,55 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
 
       var swalWithBootstrapButtons = Swal.mixin({
-        customClass: {
-          confirmButton: 'btn btn-success',
-          cancelButton: 'btn btn-danger'
-        },
+        confirmButtonClass: 'btn btn-success',
+        cancelButtonClass: 'btn btn-danger',
         buttonsStyling: false
       });
-      swalWithBootstrapButtons.fire({
-        title: '¿Estas seguro de activar la categoria?',
-        icon: 'warning',
+      swalWithBootstrapButtons({
+        title: 'Estas seguro de activar la categoria?',
+        //type: 'warning',
         showCancelButton: true,
         confirmButtonText: '<i class="fa fa-check fa-2x"></i> Aceptar',
         cancelButtonText: '<i class="fa fa-times fa-2x"></i> Cancelar',
         reverseButtons: true
       }).then(function (result) {
-        if (result.isConfirmed) {
+        if (result.value) {
           var me = _this2;
           axios.put('/categoria/activar', {
             'id': id
           }).then(function (response) {
+            // handle success
             //console.log(response);
             me.listarCategoria(1, '', 'nombre');
-            swalWithBootstrapButtons.fire('Activado', 'El registro de categoria ha sido activado', 'success');
+            swalWithBootstrapButtons('Activado!', 'El registro ha sido activado con exito.', 'success');
           })["catch"](function (error) {
+            // handle error
             console.log(error);
           });
-        } else if (
-        /* Read more about handling dismissals below */
+        } else if ( // Read more about handling dismissals
         result.dismiss === Swal.DismissReason.cancel) {}
       });
     },
-    validarCategoria: function validarCategoria() {
-      this.errorCategoria = 0;
-      this.errorMostrarMsjCategoria = [];
-      if (!this.nombre) this.errorMostrarMsjCategoria.push("(*)El nombre de la categoria no puede estar vacio");
-      if (this.errorMostrarMsjCategoria.length) this.errorCategoria = 1;
-      return this.errorCategoria;
+    validarProducto: function validarProducto() {
+      this.errorProducto = 0;
+      this.errorMostrarMsjProducto = [];
+      if (this.idcategoria == 0) this.errorMostrarMsjProducto.push("(*)Selecciona una categoria");
+      if (!this.nombre) this.errorMostrarMsjProducto.push("(*)El nombre del producto no puede estar vacio");
+      if (!this.precio_venta) this.errorMostrarMsjProducto.push("(*)El precio venta del producto debe ser un numero y no puede estar vacio");
+      if (!this.stock) this.errorMostrarMsjProducto.push("(*)El stock del producto debe ser un numero y no puede estar vacio");
+      if (this.errorMostrarMsjProducto.length) this.errorProducto = 1;
+      return this.errorProducto;
     },
     cerrarModal: function cerrarModal() {
       this.modal = 0;
       this.tituloModal = "";
+      this.idcategoria = 0;
+      this.nombre_categoria = "";
+      this.codigo = "";
       this.nombre = "";
+      this.precio_venta = 0;
+      this.stock = 0;
+      this.errorProducto = 0;
     },
     abrirModal: function abrirModal(modelo, accion) {
       var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
@@ -2678,9 +2699,13 @@ __webpack_require__.r(__webpack_exports__);
               case "registrar":
                 {
                   this.modal = 1;
-                  this.tituloModal = "Registrar Producto";
+                  this.tituloModal = 'Agregar Producto';
+                  this.idcategoria = 0;
+                  this.nombre_categoria = "";
+                  this.codigo = "";
                   this.nombre = "";
-                  this.descripcion = "";
+                  this.precio_venta = 0;
+                  this.stock = 0;
                   this.tipoAccion = 1;
                   break;
                 }
@@ -2691,9 +2716,12 @@ __webpack_require__.r(__webpack_exports__);
                   this.modal = 1;
                   this.tituloModal = "Editar Producto";
                   this.tipoAccion = 2;
-                  this.categoria_id = data["id"];
+                  this.producto_id = data["id"];
+                  this.idcategoria = data["idcategoria"];
+                  this.codigo = data["codigo"];
                   this.nombre = data["nombre"];
-                  this.descripcion = data["descripcion"];
+                  this.precio_venta = data["precio_venta"];
+                  this.stock = data["stock"];
                   break;
                 }
             }
@@ -2787,7 +2815,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.modal-content{\n    width:100% !important;\n    position:absolute !important;\n}\n.mostrar{\n    display:list-item !important;\n    opacity:1 !important;\n    position:absolute !important;\n    background-color:#3c29297a !important;\n}\n.div-error{\n    display:flex;\n    justify-content:center;\n}\n.text-error{\n    color:red !important;\n    font-weight:bold;\n    font-size:20px;\n}\n\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.modal-content{\n\n    width:100% !important;\n    position:absolute !important;\n}\n.mostrar{\n\n    display:list-item !important;\n    opacity:1 !important;\n    position:absolute !important;\n    background-color:#3c29297a !important;\n}\n.div-error{\n\n    display:flex;\n    justify-content:center;\n}\n.text-error{\n\n    color:red !important;\n    font-weight:bold;\n    font-size:20px;\n}\n\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -21123,7 +21151,7 @@ var render = function() {
             },
             [
               _c("i", { staticClass: "fa fa-plus fa-2x" }),
-              _vm._v("  Agregar Producto\n                 ")
+              _vm._v("  Agregar Producto\n                     ")
             ]
           )
         ]),
@@ -21258,7 +21286,7 @@ var render = function() {
                             [
                               _c("i", { staticClass: "fa fa-check fa-2x" }),
                               _vm._v(
-                                " Activo\n                                 "
+                                " Activo\n                                     "
                               )
                             ]
                           )
@@ -21271,7 +21299,7 @@ var render = function() {
                             [
                               _c("i", { staticClass: "fa fa-check fa-2x" }),
                               _vm._v(
-                                " Desactivado\n                                 "
+                                " Desactivado\n                                     "
                               )
                             ]
                           )
@@ -21295,10 +21323,12 @@ var render = function() {
                         },
                         [
                           _c("i", { staticClass: "fa fa-edit fa-2x" }),
-                          _vm._v(" Editar\n                                 ")
+                          _vm._v(
+                            " Editar\n                                     "
+                          )
                         ]
                       ),
-                      _vm._v("  \n                             ")
+                      _vm._v("  \n                                 ")
                     ]),
                     _vm._v(" "),
                     _c(
@@ -21322,7 +21352,7 @@ var render = function() {
                                 [
                                   _c("i", { staticClass: "fa fa-lock fa-2x" }),
                                   _vm._v(
-                                    " Desactivar\n                                 "
+                                    " Desactivar\n                                         "
                                   )
                                 ]
                               )
@@ -21342,7 +21372,7 @@ var render = function() {
                                 [
                                   _c("i", { staticClass: "fa fa-lock fa-2x" }),
                                   _vm._v(
-                                    " Activar\n                                 "
+                                    " Activar\n                                         "
                                   )
                                 ]
                               )
@@ -21778,7 +21808,7 @@ var render = function() {
                         attrs: { type: "button" },
                         on: {
                           click: function($event) {
-                            return _vm.registrarCategoria()
+                            return _vm.registrarProducto()
                           }
                         }
                       },
@@ -21797,7 +21827,7 @@ var render = function() {
                         attrs: { type: "button" },
                         on: {
                           click: function($event) {
-                            return _vm.actualizarCategoria()
+                            return _vm.actualizarProducto()
                           }
                         }
                       },
@@ -21840,7 +21870,7 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Codigo")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Precio Venta")]),
+        _c("th", [_vm._v("Precio Venta (USD$)")]),
         _vm._v(" "),
         _c("th", [_vm._v("Stock")]),
         _vm._v(" "),
