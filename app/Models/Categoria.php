@@ -9,4 +9,9 @@ class Categoria extends Model
     //
     protected $table = 'categorias';
     protected $fillable = ['nombre','descripcion','condicion'];
+
+    public function producto(){
+
+        return $this->hasMany("App\Models\Producto");
+    }
 }
