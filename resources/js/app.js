@@ -23,6 +23,7 @@
 
  Vue.component('categoria', require('./components/Categoria.vue').default);
  Vue.component('producto', require('./components/Producto.vue').default);
+ Vue.component('proveedor', require('./components/Proveedor.vue').default);
 
  /**
   * Next, we will create a fresh Vue application instance and attach it to
