@@ -164,9 +164,10 @@
                                     <div class="col-md-9">
                                         <input type="text" v-model="codigo" class="form-control" placeholder="Codigo de barras">
 
-                                        <barcode :value="codigo" :options="{format: 'EAN-13'}">
-                                        Creando codigo de barras
+                                        <barcode :value="codigo" :options="{format:'EAN-13'}">
+                                          Creando código de barras
                                         </barcode>
+
                                     </div>
                                 </div>
 
@@ -216,7 +217,8 @@
 
 <script>
 
-    import VueBarcode from 'vue-barcode';
+   import VueBarcode from 'vue-barcode';
+
     export default {
         data(){
 
@@ -254,9 +256,8 @@
         },
 
         components: {
-
-            'barcode': VueBarcode
-        },
+          'barcode': VueBarcode
+       },
 
         computed:{
 
