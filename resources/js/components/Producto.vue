@@ -75,13 +75,13 @@
                                     <td>
 
                                         <template v-if="producto.condicion">
-                                            <button type="button" class="btn btn-danger btn-sm" @click="desactivarCategoria(producto.id)">
+                                            <button type="button" class="btn btn-danger btn-sm" @click="desactivarProducto(producto.id)">
                                                 <i class="fa fa-lock fa-2x"></i> Desactivar
                                             </button>
                                         </template>
 
                                         <template v-else>
-                                            <button type="button" class="btn btn-success btn-sm" @click="activarCategoria(producto.id)">
+                                            <button type="button" class="btn btn-success btn-sm" @click="activarProducto(producto.id)">
                                                 <i class="fa fa-lock fa-2x"></i> Activar
                                             </button>
                                         </template>
@@ -164,6 +164,9 @@
                                     <div class="col-md-9">
                                         <input type="text" v-model="codigo" class="form-control" placeholder="Codigo de barras">
 
+                                        <barcode :value="codigo" :options="{format: 'EAN-13'}">
+                                        Creando codigo de barras
+                                        </barcode>
                                     </div>
                                 </div>
 
@@ -213,6 +216,7 @@
 
 <script>
 
+    import VueBarcode from 'vue-barcode';
     export default {
         data(){
 
@@ -247,6 +251,11 @@
                 arrayCategoria:[]
             }
 
+        },
+
+        components: {
+
+            'barcode': VueBarcode
         },
 
         computed:{
@@ -374,27 +383,30 @@
 
            },
 
-            actualizarCategoria(){
+            actualizarProducto(){
 
-                if(this.validarCategoria()){
+                if(this.validarProducto()){
 
                    return;
                }
 
                let me=this;
 
-               axios.put('/categoria/actualizar',{
+               axios.put('/producto/actualizar',{
 
-                 'nombre':this.nombre,
-                 'descripcion':this.descripcion,
-                 'id':this.categoria_id
+                    "idcategoria":this.idcategoria,
+                     "codigo":this.codigo,
+                     "nombre":this.nombre,
+                     "stock":this.stock,
+                     "precio_venta":this.precio_venta,
+                     "id":this.producto_id
 
 
                }).then(function (response) {
                     // handle success
                     //console.log(response);
                     me.cerrarModal();
-                    me.listarCategoria(1,'','nombre');
+                    me.listarProducto(1,'','nombre');
 
                 }).catch(function (error) {
                     // handle error
@@ -403,7 +415,7 @@
 
             },
 
-            desactivarCategoria(id){
+            desactivarProducto(id){
 
                 const swalWithBootstrapButtons = Swal.mixin({
                 confirmButtonClass: 'btn btn-success',
@@ -412,7 +424,7 @@
                 })
 
                 swalWithBootstrapButtons({
-                title: 'Estas seguro de desactivar la categoria?',
+                title: 'Estas seguro de desactivar el producto?',
                 //type: 'warning',
                 showCancelButton: true,
                 confirmButtonText: '<i class="fa fa-check fa-2x"></i> Aceptar',
@@ -423,7 +435,7 @@
 
                   let me=this;
 
-               axios.put('/categoria/desactivar',{
+               axios.put('/producto/desactivar',{
 
                  'id':id
 
@@ -431,7 +443,7 @@
                }).then(function (response) {
                     // handle success
                     //console.log(response);
-                    me.listarCategoria(1,'','nombre');
+                    me.listarProducto(1,'','nombre');
 
                      swalWithBootstrapButtons(
                     'Desactivado!',
@@ -456,7 +468,7 @@
 
             },
 
-             activarCategoria(id){
+             activarProducto(id){
 
                 const swalWithBootstrapButtons = Swal.mixin({
                 confirmButtonClass: 'btn btn-success',
@@ -465,7 +477,7 @@
                 })
 
                 swalWithBootstrapButtons({
-                title: 'Estas seguro de activar la categoria?',
+                title: 'Estas seguro de activar el producto?',
                 //type: 'warning',
                 showCancelButton: true,
                 confirmButtonText: '<i class="fa fa-check fa-2x"></i> Aceptar',
@@ -476,7 +488,7 @@
 
                   let me=this;
 
-               axios.put('/categoria/activar',{
+               axios.put('/producto/activar',{
 
                  'id':id
 
@@ -484,7 +496,7 @@
                }).then(function (response) {
                     // handle success
                     //console.log(response);
-                    me.listarCategoria(1,'','nombre');
+                    me.listarProducto(1,'','nombre');
 
                      swalWithBootstrapButtons(
                     'Activado!',
