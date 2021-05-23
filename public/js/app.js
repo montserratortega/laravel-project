@@ -2619,13 +2619,15 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       var swalWithBootstrapButtons = Swal.mixin({
-        confirmButtonClass: 'btn btn-success',
-        cancelButtonClass: 'btn btn-danger',
+        customClass: {
+          confirmButton: 'btn btn-success',
+          cancelButton: 'btn btn-danger'
+        },
         buttonsStyling: false
       });
-      swalWithBootstrapButtons({
-        title: 'Estas seguro de desactivar el producto?',
-        //type: 'warning',
+      swalWithBootstrapButtons.fire({
+        title: '¿Estas seguro de desactivar el producto?',
+        type: 'warning',
         showCancelButton: true,
         confirmButtonText: '<i class="fa fa-check fa-2x"></i> Aceptar',
         cancelButtonText: '<i class="fa fa-times fa-2x"></i> Cancelar',
@@ -3026,14 +3028,16 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       var me = this;
-      axios.post('/proveedor/registrar', {
+      var body = {
         'nombre': this.nombre,
         'tipo_documento': this.tipo_documento,
         'num_documento': this.num_documento,
         'telefono': this.telefono,
         'email': this.email,
         'direccion': this.direccion
-      }).then(function (response) {
+      };
+      console.log('Body: ', body);
+      axios.post('/proveedor/registrar', body).then(function (response) {
         // handle success
         //console.log(response);
         me.cerrarModal();
@@ -3049,7 +3053,7 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       var me = this;
-      axios.put('/proveedor/actualizar', {
+      var body = {
         'nombre': this.nombre,
         'tipo_documento': this.tipo_documento,
         'num_documento': this.num_documento,
@@ -3057,9 +3061,11 @@ __webpack_require__.r(__webpack_exports__);
         'email': this.email,
         'direccion': this.direccion,
         'id': this.proveedor_id
-      }).then(function (response) {
+      };
+      console.log('Body: ', body);
+      axios.put('/proveedor/actualizar', body).then(function (response) {
         // handle success
-        //console.log(response);
+        console.log(response);
         me.cerrarModal();
         me.listarProveedor(1, '', 'nombre');
       })["catch"](function (error) {
@@ -3076,13 +3082,13 @@ __webpack_require__.r(__webpack_exports__);
     },
     cerrarModal: function cerrarModal() {
       this.modal = 0;
-      this.tituloModal = '';
-      this.nombre = '';
-      this.tipo_documento = 'CEDULA';
-      this.num_documento = '';
-      this.direccion = '';
-      this.telefono = '';
-      this.email = '';
+      this.tituloModal = "";
+      this.nombre = "";
+      this.tipo_documento = "CEDULA";
+      this.num_documento = "";
+      this.direccion = "";
+      this.telefono = "";
+      this.email = "";
       this.errorProveedor = 0;
     },
     abrirModal: function abrirModal(modelo, accion) {
@@ -3095,13 +3101,13 @@ __webpack_require__.r(__webpack_exports__);
               case "registrar":
                 {
                   this.modal = 1;
-                  this.tituloModal = 'Agregar Proveedor';
-                  this.nombre = '';
-                  this.tipo_documento = 'CEDULA';
-                  this.num_documento = '';
-                  this.direccion = '';
-                  this.telefono = '';
-                  this.email = '';
+                  this.tituloModal = "Agregar Proveedor";
+                  this.nombre = "";
+                  this.tipo_documento = "CEDULA";
+                  this.num_documento = "";
+                  this.direccion = "";
+                  this.telefono = "";
+                  this.email = "";
                   this.tipoAccion = 1;
                   break;
                 }
@@ -3110,15 +3116,15 @@ __webpack_require__.r(__webpack_exports__);
                 {
                   //console.log(data);
                   this.modal = 1;
-                  this.tituloModal = 'Editar Proveedor';
+                  this.tituloModal = "Editar Proveedor";
                   this.tipoAccion = 2;
-                  this.proveedor_id = data['id'];
-                  this.nombre = data['nombre'];
-                  this.tipo_documento = data['tipo_documento'];
-                  this.num_documento = data['num_documento'];
-                  this.telefono = data['telefono'];
-                  this.email = data['email'];
-                  this.direccion = data['direccion'];
+                  this.proveedor_id = data["id"];
+                  this.nombre = data["nombre"];
+                  this.tipo_documento = data["tipo_documento"];
+                  this.num_documento = data["num_documento"];
+                  this.telefono = data["telefono"];
+                  this.email = data["email"];
+                  this.direccion = data["direccion"];
                   break;
                 }
             }
@@ -26341,7 +26347,7 @@ var render = function() {
               attrs: { type: "button" },
               on: {
                 click: function($event) {
-                  return _vm.abrirModal("proveedor", "registrar")
+                  return _vm.abrirModal("proveedor", "registrar", _vm.proveedor)
                 }
               }
             },

@@ -11,7 +11,7 @@
 
                        <h2>Listado de Proveedores</h2><br/>
 
-                        <button class="btn btn-primary btn-lg" type="button" @click="abrirModal('proveedor','registrar')">
+                        <button class="btn btn-primary btn-lg" type="button" @click="abrirModal('proveedor','registrar',proveedor)">
                             <i class="fa fa-plus fa-2x"></i>&nbsp;&nbsp;Agregar Proveedor
                         </button>
                     </div>
@@ -293,17 +293,18 @@
 
                let me=this;
 
-               axios.post('/proveedor/registrar',{
-
+               var body = {
                     'nombre': this.nombre,
                     'tipo_documento': this.tipo_documento,
                     'num_documento' : this.num_documento,
                     'telefono' : this.telefono,
                     'email' : this.email,
                     'direccion' : this.direccion
+               }
 
+               console.log('Body: ', body)
 
-               }).then(function (response) {
+               axios.post('/proveedor/registrar', body).then(function (response) {
                     // handle success
                     //console.log(response);
                     me.cerrarModal();
@@ -325,8 +326,7 @@
 
                let me=this;
 
-               axios.put('/proveedor/actualizar',{
-
+               var body = {
                     'nombre': this.nombre,
                     'tipo_documento': this.tipo_documento,
                     'num_documento' : this.num_documento,
@@ -334,11 +334,13 @@
                     'email' : this.email,
                     'direccion' : this.direccion,
                     'id':this.proveedor_id
+               }
 
+               console.log('Body: ', body)
 
-               }).then(function (response) {
+               axios.put('/proveedor/actualizar', body).then(function (response) {
                     // handle success
-                    //console.log(response);
+                    console.log(response);
                     me.cerrarModal();
                     me.listarProveedor(1,'','nombre');
 
@@ -364,13 +366,13 @@
            cerrarModal(){
 
                 this.modal=0;
-                this.tituloModal='';
-                this.nombre='';
-                this.tipo_documento='CEDULA';
-                this.num_documento='';
-                this.direccion='';
-                this.telefono='';
-                this.email='';
+                this.tituloModal="";
+                this.nombre="";
+                this.tipo_documento="CEDULA";
+                this.num_documento="";
+                this.direccion="";
+                this.telefono="";
+                this.email="";
                 this.errorProveedor=0;
 
            },
@@ -390,13 +392,13 @@
                                 {
 
                                     this.modal = 1;
-                                    this.tituloModal = 'Agregar Proveedor';
-                                    this.nombre= '';
-                                    this.tipo_documento='CEDULA';
-                                    this.num_documento='';
-                                    this.direccion='';
-                                    this.telefono='';
-                                    this.email='';
+                                    this.tituloModal = "Agregar Proveedor";
+                                    this.nombre= "";
+                                    this.tipo_documento="CEDULA";
+                                    this.num_documento="";
+                                    this.direccion="";
+                                    this.telefono="";
+                                    this.email="";
                                     this.tipoAccion = 1;
                                     break;
 
@@ -407,15 +409,15 @@
                                 {
                                     //console.log(data);
                                     this.modal=1;
-                                    this.tituloModal='Editar Proveedor';
+                                    this.tituloModal="Editar Proveedor";
                                     this.tipoAccion=2;
-                                    this.proveedor_id=data['id'];
-                                    this.nombre = data['nombre'];
-                                    this.tipo_documento = data['tipo_documento'];
-                                    this.num_documento = data['num_documento'];
-                                    this.telefono = data['telefono'];
-                                    this.email = data['email'];
-                                    this.direccion = data['direccion'];
+                                    this.proveedor_id=data["id"];
+                                    this.nombre = data["nombre"];
+                                    this.tipo_documento = data["tipo_documento"];
+                                    this.num_documento = data["num_documento"];
+                                    this.telefono = data["telefono"];
+                                    this.email = data["email"];
+                                    this.direccion = data["direccion"];
                                     break;
                                 }
 

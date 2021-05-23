@@ -417,16 +417,17 @@
             },
 
             desactivarProducto(id){
-
                 const swalWithBootstrapButtons = Swal.mixin({
-                confirmButtonClass: 'btn btn-success',
-                cancelButtonClass: 'btn btn-danger',
-                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger'
+                },
+                buttonsStyling: false
                 })
 
-                swalWithBootstrapButtons({
-                title: 'Estas seguro de desactivar el producto?',
-                //type: 'warning',
+                swalWithBootstrapButtons.fire({
+                title: '¿Estas seguro de desactivar el producto?',
+                type: 'warning',
                 showCancelButton: true,
                 confirmButtonText: '<i class="fa fa-check fa-2x"></i> Aceptar',
                 cancelButtonText: '<i class="fa fa-times fa-2x"></i> Cancelar',
