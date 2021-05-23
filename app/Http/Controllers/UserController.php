@@ -29,7 +29,7 @@ class UserController extends Controller
             ->select('users.id','users.nombre','users.direccion','users.telefono',
             'users.email','users.usuario','users.password',
             'users.condicion','users.idrol','roles.nombre as rol')
-            ->where($criterio, 'like', '%'. $buscar . '%')
+            ->where('users.'.$criterio, 'like', '%'. $buscar . '%')
             ->orderBy('id', 'desc')->paginate(3);
 
         }
