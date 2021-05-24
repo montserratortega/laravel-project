@@ -7,12 +7,14 @@
             <div class="container-fluid">
                 <!-- Ejemplo de tabla Listado -->
                 <div class="card">
+
+                    <template v-if="listado==1">
                     <div class="card-header">
 
                        <h2>Listado de Compras</h2><br/>
 
-                        <button class="btn btn-primary btn-lg" type="button" @click="abrirModal('compra','registrar')">
-                            <i class="fa fa-plus fa-2x"></i>&nbsp;&nbsp;Agregar Compra
+                        <button class="btn btn-primary btn-lg" type="button" @click="mostrarDetalle()">
+                            <i class="fa fa-plus fa-2x"></i>&nbsp;&nbsp;Nueva Compra
                         </button>
                     </div>
 
@@ -117,9 +119,12 @@
                             </ul>
                         </nav>
                     </div>
+                    </template>
                     <!--FIN Listado-->
 
                     <!-- Detalle-->
+
+                    <template v-else>
 
                     <span><strong>(*) Campo obligatorio</strong></span><br/>
 
@@ -260,7 +265,7 @@
                             </div>
                         </div>
                     </div>
-
+                    </template>
 
                     <!-- Fin Detalle-->
 
@@ -521,6 +526,16 @@
                 if (this.errorMostrarMsjUsuario.length) this.errorUsuario = 1;
 
                 return this.errorUsuario;
+            },
+
+            mostrarDetalle(){
+
+                this.listado=0;
+            },
+
+            ocultarDetalle(){
+
+                this.listado=1;
             },
 
            cerrarModal(){
