@@ -39,10 +39,12 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('/producto/actualizar', 'ProductoController@update');
         Route::put('/producto/desactivar', 'ProductoController@desactivar');
         Route::put('/producto/activar', 'ProductoController@activar');
+        Route::get('/producto/buscarProducto', 'ProductoController@buscarProducto');
 
         Route::get('/proveedor', 'ProveedorController@index');
         Route::post('/proveedor/registrar', 'ProveedorController@store');
         Route::put('/proveedor/actualizar', 'ProveedorController@update');
+        Route::get('/proveedor/selectProveedor', 'ProveedorController@selectProveedor');
 
         Route::get('/compra', 'CompraController@index');
         Route::post('/compra/registrar', 'CompraController@store');
@@ -85,10 +87,13 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('/producto/actualizar', 'ProductoController@update');
         Route::put('/producto/desactivar', 'ProductoController@desactivar');
         Route::put('/producto/activar', 'ProductoController@activar');
+        Route::get('/producto/buscarProducto', 'ProductoController@buscarProducto');
+
 
         Route::get('/proveedor', 'ProveedorController@index');
         Route::post('/proveedor/registrar', 'ProveedorController@store');
         Route::put('/proveedor/actualizar', 'ProveedorController@update');
+        Route::get('/proveedor/selectProveedor', 'ProveedorController@selectProveedor');
 
         Route::get('/compra', 'CompraController@index');
         Route::post('/compra/registrar', 'CompraController@store');

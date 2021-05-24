@@ -48,6 +48,16 @@ class ProductoController extends Controller
 
     }
 
+    public function buscarProducto(Request $request){
+        if (!$request->ajax()) return redirect ('/');
+
+        $filtro = $request->filtro;
+        $productos = Producto::where('codigo','=', $filtro)
+        ->select('id','nombre')->orderBy('nombre', 'asc')->take(1)->get();
+
+        return ['productos' => $productos];
+    }
+
     public function store(Request $request)
     {
         //

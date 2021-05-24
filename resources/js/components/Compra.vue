@@ -317,6 +317,8 @@
 
 <script>
 
+    import vSelect from 'vue-select';
+
     export default {
         data(){
 
@@ -350,9 +352,19 @@
                 },
                 offset:3,
                 criterio:'num_compra',
-                buscar:''
+                buscar:'',
+                arrayProducto: [],
+                idproducto: 0,
+                codigo: '',
+                producto: '',
+                precio: 0,
+                cantidad: 0
             }
 
+        },
+
+        components: {
+            vSelect
         },
 
         computed:{
@@ -417,19 +429,49 @@
                 });
            },
 
-           selectRol(){
+           selectProveedor(search,loading){
+                let me=this;
+                loading(true)
 
-               let me=this;
-               var url= '/rol/selectRol';
-               axios.get(url).then(function (response) {
-                    var respuesta = response.data;
-                    me.arrayRol=respuesta.roles;
+                var url= '/proveedor/selectProveedor?filtro='+search;
+                axios.get(url).then(function (response) {
+                    let respuesta = response.data;
+                    q: search
+                    me.arrayProveedor=respuesta.proveedores;
+                    loading(false)
                 })
                 .catch(function (error) {
                     console.log(error);
                 });
+            },
 
-           },
+            getDatosProveedor(val1){
+                let me = this;
+                me.loading = true;
+                me.idproveedor = val1.id;
+            },
+
+            buscarProducto(){
+                let me=this;
+                var url= '/producto/buscarProducto?filtro=' + me.codigo;
+
+                axios.get(url).then(function (response) {
+                    var respuesta= response.data;
+                    me.arrayProducto = respuesta.productos;
+
+                    if (me.arrayProducto.length>0){
+                        me.producto=me.arrayProducto[0]['nombre'];
+                        me.idproducto=me.arrayProducto[0]['id'];
+                    }
+                    else{
+                        me.producto='No existe el producto';
+                        me.idproducto=0;
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+            },
 
            cambiarPagina(page,buscar,criterio){
 

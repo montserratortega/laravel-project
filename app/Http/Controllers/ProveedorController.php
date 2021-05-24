@@ -44,6 +44,15 @@ class ProveedorController extends Controller
 
     }
 
+    public function selectProveedor(Request $request){
+        //if (!$request->ajax()) return redirect('/');
+
+        $filtro = $request->filtro;
+        $proveedores = Proveedor::orderBy('id', 'asc')->get();
+
+        return ['proveedores' => $proveedores];
+    }
+
     public function store(Request $request)
     {
         //
