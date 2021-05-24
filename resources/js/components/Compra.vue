@@ -15,6 +15,9 @@
                             <i class="fa fa-plus fa-2x"></i>&nbsp;&nbsp;Agregar Compra
                         </button>
                     </div>
+
+                    <!--Listado-->
+
                     <div class="card-body">
                         <div class="form-group row">
                             <div class="col-md-6">
@@ -114,6 +117,153 @@
                             </ul>
                         </nav>
                     </div>
+                    <!--FIN Listado-->
+
+                    <!-- Detalle-->
+
+                    <span><strong>(*) Campo obligatorio</strong></span><br/>
+
+                    <h3 class="text-center">LLenar el formulario</h3>
+
+                    <div class="card-body">
+
+                        <div class="form-group row border">
+
+                             <div class="col-md-8">
+                                <div class="form-group">
+                                    <label class="text-uppercase"><strong>Número Compra(*)</strong></label>
+                                    <input type="text" class="form-control" v-model="num_compra" placeholder="">
+                                </div>
+                            </div>
+
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label class="text-uppercase"><strong>Proveedor(*)</strong></label>
+                                    <v-select
+                                        :on-search="selectProveedor"
+                                        label="nombre"
+                                        :options="arrayProveedor"
+                                        placeholder="Buscar Proveedores..."
+                                        :onChange="getDatosProveedor"
+                                    >
+
+                                    </v-select>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="form-group row">
+
+                            <div class="col-md-12">
+                                    <div v-show="errorCompra" class="form-group row div-error">
+                                        <div class="text-center text-error">
+                                            <div v-for="error in errorMostrarMsjCompra" :key="error" v-text="error">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                        </div>
+
+
+                        <div class="form-group row border">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Producto <span class="text-error" v-show="idproducto==0">(*Ingrese código del producto)</span></label>
+                                    <div class="form-inline">
+                                        <input type="text" class="form-control" v-model="codigo" @keyup.enter="buscarProducto()" placeholder="Ingrese código">
+                                        <button @click="abrirModal()" class="btn btn-primary">
+
+                                           <i class="fa fa-plus"></i>&nbsp;Agregar Productos
+
+                                        </button>
+                                        <input type="text" readonly class="form-control" v-model="producto">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>Precio <span class="text-error" v-show="precio==0">(*Ingrese un valor)</span></label>
+                                    <input type="number" value="0" step="any" class="form-control" v-model="precio">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>Cantidad <span class="text-error" v-show="cantidad==0">(*Ingrese un valor)</span></label>
+                                    <input type="number" value="0" class="form-control" v-model="cantidad">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <button @click="agregarDetalle()" class="btn btn-primary form-control btnagregar"><i class="fa fa-plus fa-2x"></i> Agregar detalle</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <br/><br/>
+
+                        <div class="form-group row border">
+
+                            <h3>Lista de Compras a Proveedores</h3>
+
+                            <div class="table-responsive col-md-12">
+                                <table class="table table-bordered table-striped table-sm">
+                                    <thead>
+                                        <tr class="bg-success">
+                                            <th>Eliminar</th>
+                                            <th>Producto</th>
+                                            <th>Precio</th>
+                                            <th>Cantidad</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody v-if="arrayDetalle.length">
+                                        <tr v-for="(detalle,index) in arrayDetalle" :key="detalle.id">
+                                            <td>
+                                                <button @click="eliminarDetalle(index)" type="button" class="btn btn-danger btn-sm">
+                                                    <i class="fa fa-times fa-2x"></i>
+                                                </button>
+                                            </td>
+                                            <td v-text="detalle.producto">
+                                            </td>
+                                            <td>
+                                                <input v-model="detalle.precio" type="number" value="3" class="form-control">
+                                            </td>
+                                            <td>
+                                                <input v-model="detalle.cantidad" type="number" value="2" class="form-control">
+                                            </td>
+                                            <td>
+                                                {{detalle.precio*detalle.cantidad}}
+                                            </td>
+                                        </tr>
+                                        <tr style="background-color: grey;">
+                                            <td colspan="4" align="right"><strong>Total:</strong></td>
+                                            <td><strong>USD$ {{total=calcularTotal}}</strong></td>
+                                        </tr>
+                                    </tbody>
+                                    <tbody v-else>
+                                        <tr>
+                                            <td colspan="5">
+                                                No se han agregado productos
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-12">
+                                <button type="button" class="btn btn-danger" @click="ocultarDetalle()"><i class="fa fa-times fa-2x"></i> Cerrar</button>
+                                <button type="button" class="btn btn-success" @click="registrarCompra()"><i class="fa fa-save fa-2x"></i> Registrar Compra</button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Fin Detalle-->
+
                 </div>
                 <!-- Fin ejemplo de tabla Listado -->
             </div>
@@ -141,59 +291,7 @@
                             </div>
 
 
-                            <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
-                                 <div class="form-group row">
-                                    <label class="col-md-3 form-control-label" for="text-input">Usuario (*)</label>
-                                    <div class="col-md-9">
-                                        <input type="text" v-model="nombre" class="form-control" placeholder="Nombre del usuario">
-                                    </div>
-                                </div>
 
-                                <div class="form-group row">
-                                    <label class="col-md-3 form-control-label" for="email-input">Dirección</label>
-                                    <div class="col-md-9">
-                                        <input type="text" v-model="direccion" class="form-control" placeholder="Dirección">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-md-3 form-control-label" for="email-input">Teléfono</label>
-                                    <div class="col-md-9">
-                                        <input type="text" v-model="telefono" class="form-control" placeholder="Teléfono">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-md-3 form-control-label" for="email-input">Email</label>
-                                    <div class="col-md-9">
-                                        <input type="email" v-model="email" class="form-control" placeholder="Email">
-                                    </div>
-                                </div>
-
-                                 <div class="form-group row">
-                                    <label class="col-md-3 form-control-label" for="email-input">Rol</label>
-                                    <div class="col-md-9">
-                                        <select class="form-control" v-model="idrol">
-                                            <option value="0">Seleccione un rol</option>
-                                            <option v-for="rol in arrayRol" :key="rol.id" :value="rol.id" v-text="rol.nombre">
-                                            </option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                 <div class="form-group row">
-                                    <label class="col-md-3 form-control-label" for="email-input">Usuario</label>
-                                    <div class="col-md-9">
-                                        <input type="text" v-model="usuario" class="form-control" placeholder="Usuario">
-                                    </div>
-                                </div>
-                                 <div class="form-group row">
-                                    <label class="col-md-3 form-control-label" for="email-input">Password</label>
-                                    <div class="col-md-9">
-                                        <input type="password" v-model="password" class="form-control" placeholder="Password de Acceso">
-                                    </div>
-                                </div>
-
-
-                            </form>
                         </div>
                         <div class="modal-footer">
                             <button type="button" @click="cerrarModal()" class="btn btn-danger"><i class="fa fa-times fa-2x"></i> Cerrar</button>
@@ -635,6 +733,13 @@
       color:red !important;
       font-weight:bold;
       font-size:20px;
+  }
+
+  @media (min-width: 600px) {
+
+      .btnagregar {
+          margin-top: 2rem;
+      }
   }
 
 </style>
