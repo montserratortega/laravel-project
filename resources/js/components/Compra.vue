@@ -245,7 +245,7 @@
                                         </tr>
                                         <tr style="background-color: grey;">
                                             <td colspan="4" align="right"><strong>Total:</strong></td>
-                                            <td><strong>USD$ {{total=calcularTotal}}</strong></td>
+                                            <td><strong> MXN {{total=calcularTotal}}</strong></td>
                                         </tr>
                                     </tbody>
                                     <tbody v-else>
@@ -482,6 +482,18 @@
                me.pagination.current_page=page;
 
                me.listarCompra(page,buscar,criterio);
+
+           },
+
+           agregarDetalle(){
+               let me=this;
+
+                    me.arrayDetalle.push({
+                        idproducto: me.idproducto,
+                        producto: me.producto,
+                        cantidad: me.cantidad,
+                        precio: me.precio
+                    });
 
            },
 

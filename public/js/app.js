@@ -3058,6 +3058,15 @@ __webpack_require__.r(__webpack_exports__);
       me.pagination.current_page = page;
       me.listarCompra(page, buscar, criterio);
     },
+    agregarDetalle: function agregarDetalle() {
+      var me = this;
+      me.arrayDetalle.push({
+        idproducto: me.idproducto,
+        producto: me.producto,
+        cantidad: me.cantidad,
+        precio: me.precio
+      });
+    },
     registrarUsuario: function registrarUsuario() {
       if (this.validarUsuario()) {
         return;
@@ -29154,7 +29163,7 @@ var render = function() {
                                       _c("td", [
                                         _c("strong", [
                                           _vm._v(
-                                            "USD$ " +
+                                            " MXN " +
                                               _vm._s(
                                                 (_vm.total = _vm.calcularTotal)
                                               )
