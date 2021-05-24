@@ -13,7 +13,7 @@ class CompraController extends Controller
     //
     public function index(Request $request)
     {
-        //if (!$request->ajax()) return redirect('/');
+        if (!$request->ajax()) return redirect('/');
 
         $buscar = $request->buscar;
         $criterio = $request->criterio;
@@ -54,15 +54,13 @@ class CompraController extends Controller
         try{
             DB::beginTransaction();
 
-            $mytime= Carbon::now('America/Costa_Rica');
+            $mytime= Carbon::now('America/Mexico_City');
 
             $compra = new Compra();
             $compra->idproveedor = $request->idproveedor;
             $compra->idusuario = \Auth::user()->id;
-            $compra->tipo_identificacion = $request->tipo_identificacion;
             $compra->num_compra = $request->num_compra;
             $compra->fecha_compra = $mytime->toDateString();
-            $compra->impuesto = $request->impuesto;
             $compra->total = $request->total;
             $compra->estado = 'Registrado';
             $compra->save();

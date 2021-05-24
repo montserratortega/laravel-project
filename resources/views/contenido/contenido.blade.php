@@ -17,7 +17,7 @@
             </template>
 
             <template v-if="menu==3">
-              <h1>Compras</h1>
+              <compra></compra>
             </template>
 
             <template v-if="menu==4">
@@ -60,6 +60,7 @@
             <template v-if="menu==6">
               <cliente></cliente>
             </template>
+
             @elseif (Auth::user()->idrol == 3)
             <template v-if="menu==0">
             <h1>Escritorio</h1>
@@ -74,7 +75,7 @@
             </template>
 
             <template v-if="menu==3">
-            <h1>Compras</h1>
+                <compra></compra>
             </template>
 
             <template v-if="menu==4">
