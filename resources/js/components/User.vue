@@ -56,7 +56,7 @@
 
 
                                     <td>
-                                        <button type="button" class="btn btn-info btn-md" @click="abrirModal('proveedor','actualizar',proveedor)">
+                                        <button type="button" class="btn btn-info btn-md" @click="abrirModal('usuario','actualizar',usuario)">
 
                                           <i class="fa fa-edit fa-2x"></i> Editar
                                         </button> &nbsp;
@@ -115,11 +115,11 @@
 
                         <div class="modal-body">
 
-                            <div v-show="errorProveedor" class="form-group row div-error">
+                            <div v-show="errorUsuario" class="form-group row div-error">
 
                                 <div class="text-center text-error">
 
-                                    <div v-for="error in errorMostrarMsjProveedor" :key="error" v-text="error"></div>
+                                    <div v-for="error in errorMostrarMsjUsuario" :key="error" v-text="error"></div>
 
                                 </div>
 
@@ -128,27 +128,12 @@
 
                             <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
                                  <div class="form-group row">
-                                    <label class="col-md-3 form-control-label" for="text-input">Proveedor (*)</label>
+                                    <label class="col-md-3 form-control-label" for="text-input">Usuario (*)</label>
                                     <div class="col-md-9">
-                                        <input type="text" v-model="nombre" class="form-control" placeholder="Nombre del proveedor">
+                                        <input type="text" v-model="nombre" class="form-control" placeholder="Nombre del usuario">
                                     </div>
                                 </div>
-                                <div class="form-group row">
-                                    <label class="col-md-3 form-control-label" for="text-input">Tipo Documento</label>
-                                    <div class="col-md-9">
-                                        <select v-model="tipo_documento" class="form-control">
-                                            <option value="DNI">DNI</option>
-                                            <option value="CEDULA">CEDULA</option>
-                                            <option value="PASS">PASS</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-md-3 form-control-label" for="text-input">Número</label>
-                                    <div class="col-md-9">
-                                        <input type="text" v-model="num_documento" class="form-control" placeholder="Número de documento">
-                                    </div>
-                                </div>
+
                                 <div class="form-group row">
                                     <label class="col-md-3 form-control-label" for="email-input">Dirección</label>
                                     <div class="col-md-9">
@@ -168,13 +153,37 @@
                                     </div>
                                 </div>
 
+                                 <div class="form-group row">
+                                    <label class="col-md-3 form-control-label" for="email-input">Rol</label>
+                                    <div class="col-md-9">
+                                        <select class="form-control" v-model="idrol">
+                                            <option value="0">Seleccione un rol</option>
+                                            <option v-for="rol in arrayRol" :key="rol.id" :value="rol.id" v-text="rol.nombre">
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                 <div class="form-group row">
+                                    <label class="col-md-3 form-control-label" for="email-input">Usuario</label>
+                                    <div class="col-md-9">
+                                        <input type="text" v-model="usuario" class="form-control" placeholder="Usuario">
+                                    </div>
+                                </div>
+                                 <div class="form-group row">
+                                    <label class="col-md-3 form-control-label" for="email-input">Password</label>
+                                    <div class="col-md-9">
+                                        <input type="password" v-model="password" class="form-control" placeholder="Password de Acceso">
+                                    </div>
+                                </div>
+
 
                             </form>
                         </div>
                         <div class="modal-footer">
                             <button type="button" @click="cerrarModal()" class="btn btn-danger"><i class="fa fa-times fa-2x"></i> Cerrar</button>
-                            <button type="button" @click="registrarProveedor()" v-if="tipoAccion==1" class="btn btn-success"><i class="fa fa-save fa-2x"></i> Guardar</button>
-                            <button type="button" @click="actualizarProveedor()" v-if="tipoAccion==2" class="btn btn-success"><i class="fa fa-save fa-2x"></i> Actualizar</button>
+                            <button type="button" @click="registrarUsuario()" v-if="tipoAccion==1" class="btn btn-success"><i class="fa fa-save fa-2x"></i> Guardar</button>
+                            <button type="button" @click="actualizarUsuario()" v-if="tipoAccion==2" class="btn btn-success"><i class="fa fa-save fa-2x"></i> Actualizar</button>
 
                         </div>
                     </div>
@@ -204,6 +213,7 @@
                 password : '',
                 idrol : 0,
                 arrayUsuario:[],
+                arrayRol:[],
                 modal:0,
                 tituloModal:'',
                 tipoAccion:0,
@@ -288,6 +298,20 @@
                 });
            },
 
+           selectRol(){
+
+               let me=this;
+               var url= '/rol/selectRol';
+               axios.get(url).then(function (response) {
+                    var respuesta = response.data;
+                    me.arrayRol=respuesta.roles;
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+
+           },
+
            cambiarPagina(page,buscar,criterio){
 
               let me = this;
@@ -302,7 +326,7 @@
 
            registrarUsuario(){
 
-               if(this.validarProveedor()){
+               if(this.validarUsuario()){
 
                    return;
                }
@@ -311,20 +335,22 @@
 
                var body = {
                     'nombre': this.nombre,
-                    'tipo_documento': this.tipo_documento,
-                    'num_documento' : this.num_documento,
+                    'direccion' : this.direccion,
                     'telefono' : this.telefono,
                     'email' : this.email,
-                    'direccion' : this.direccion
+                    'usuario' : this.usuario,
+                    'password' : this.password,
+                    'idrol' : this.idrol
+
                }
 
                console.log('Body: ', body)
 
-               axios.post('/proveedor/registrar', body).then(function (response) {
+               axios.post('/user/registrar', body).then(function (response) {
                     // handle success
                     //console.log(response);
                     me.cerrarModal();
-                    me.listarProveedor(1,'','nombre');
+                    me.listarUsuario(1,'','nombre');
 
                 }).catch(function (error) {
                     // handle error
@@ -333,9 +359,9 @@
 
            },
 
-            actualizarProveedor(){
+            actualizarUsuario(){
 
-                if(this.validarProveedor()){
+                if(this.validarUsuario()){
 
                    return;
                }
@@ -344,21 +370,22 @@
 
                var body = {
                     'nombre': this.nombre,
-                    'tipo_documento': this.tipo_documento,
-                    'num_documento' : this.num_documento,
+                    'direccion' : this.direccion,
                     'telefono' : this.telefono,
                     'email' : this.email,
-                    'direccion' : this.direccion,
-                    'id':this.proveedor_id
+                    'usuario' : this.usuario,
+                    'password' : this.password,
+                    'idrol' : this.idrol,
+                    'id' : this.usuario_id
                }
 
                console.log('Body: ', body)
 
-               axios.put('/proveedor/actualizar', body).then(function (response) {
+               axios.put('/user/actualizar', body).then(function (response) {
                     // handle success
                     console.log(response);
                     me.cerrarModal();
-                    me.listarProveedor(1,'','nombre');
+                    me.listarUsuario(1,'','nombre');
 
                 }).catch(function (error) {
                     // handle error
@@ -367,16 +394,19 @@
 
             },
 
-            validarProveedor(){
+            validarUsuario(){
 
-                this.errorProveedor=0;
-                this.errorMostrarMsjProveedor =[];
+                this.errorUsuario=0;
+                this.errorMostrarMsjUsuario =[];
 
-                if (!this.nombre) this.errorMostrarMsjProveedor.push("(*)El nombre del proveedor no puede estar vacío.");
+                if (!this.nombre) this.errorMostrarMsjUsuario.push("(*)El nombre no puede estar vacío.");
+                if (!this.usuario) this.errorMostrarMsjUsuario.push("(*)El nombre del usuario no puede estar vacío.");
+                if (!this.password) this.errorMostrarMsjUsuario.push("(*)El password no puede estar vacío.");
+                if (this.idrol==0) this.errorMostrarMsjUsuario.push("(*)Debes seleccionar un rol para el usuario.");
 
-                if (this.errorMostrarMsjProveedor.length) this.errorProveedor = 1;
+                if (this.errorMostrarMsjUsuario.length) this.errorUsuario = 1;
 
-                return this.errorProveedor;
+                return this.errorUsuario;
             },
 
            cerrarModal(){
@@ -384,20 +414,23 @@
                 this.modal=0;
                 this.tituloModal="";
                 this.nombre="";
-                this.tipo_documento="CEDULA";
-                this.num_documento="";
                 this.direccion="";
                 this.telefono="";
                 this.email="";
-                this.errorProveedor=0;
+                this.usuario="";
+                this.password="";
+                this.idrol=0;
+                this.errorUsuario=0;
 
            },
 
            abrirModal(modelo,accion,data=[]){
 
+                this.selectRol();
+
                  switch(modelo){
 
-                    case "proveedor":
+                    case "usuario":
 
                     {
 
@@ -408,13 +441,14 @@
                                 {
 
                                     this.modal = 1;
-                                    this.tituloModal = "Agregar Proveedor";
+                                    this.tituloModal = "Agregar Usuario";
                                     this.nombre= "";
-                                    this.tipo_documento="CEDULA";
-                                    this.num_documento="";
                                     this.direccion="";
                                     this.telefono="";
                                     this.email="";
+                                    this.usuario = "";
+                                    this.password="";
+                                    this.idrol=0;
                                     this.tipoAccion = 1;
                                     break;
 
@@ -425,15 +459,16 @@
                                 {
                                     //console.log(data);
                                     this.modal=1;
-                                    this.tituloModal="Editar Proveedor";
+                                    this.tituloModal="Editar Usuario";
                                     this.tipoAccion=2;
-                                    this.proveedor_id=data["id"];
+                                    this.usuario_id=data["id"];
                                     this.nombre = data["nombre"];
-                                    this.tipo_documento = data["tipo_documento"];
-                                    this.num_documento = data["num_documento"];
+                                    this.direccion = data["direccion"];
                                     this.telefono = data["telefono"];
                                     this.email = data["email"];
-                                    this.direccion = data["direccion"];
+                                    this.usuario = data["usuario"];
+                                    this.password = data["password"];
+                                    this.idrol = data["idrol"];
                                     break;
                                 }
 
