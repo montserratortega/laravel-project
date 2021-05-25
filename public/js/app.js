@@ -5422,6 +5422,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
@@ -5459,7 +5469,8 @@ __webpack_require__.r(__webpack_exports__);
       codigo: '',
       producto: '',
       precio: 0,
-      cantidad: 0
+      cantidad: 0,
+      descuento: 0
     };
   },
   components: {
@@ -34036,19 +34047,19 @@ var render = function() {
                             {
                               name: "model",
                               rawName: "v-model",
-                              value: _vm.num_compra,
-                              expression: "num_compra"
+                              value: _vm.num_venta,
+                              expression: "num_venta"
                             }
                           ],
                           staticClass: "form-control",
                           attrs: { type: "text", placeholder: "" },
-                          domProps: { value: _vm.num_compra },
+                          domProps: { value: _vm.num_venta },
                           on: {
                             input: function($event) {
                               if ($event.target.composing) {
                                 return
                               }
-                              _vm.num_compra = $event.target.value
+                              _vm.num_venta = $event.target.value
                             }
                           }
                         })
@@ -34064,11 +34075,11 @@ var render = function() {
                           _vm._v(" "),
                           _c("v-select", {
                             attrs: {
-                              "on-search": _vm.selectProveedor,
+                              "on-search": _vm.selectCliente,
                               label: "nombre",
-                              options: _vm.arrayProveedor,
-                              placeholder: "Buscar Proveedores...",
-                              onChange: _vm.getDatosProveedor
+                              options: _vm.arrayCliente,
+                              placeholder: "Buscar Clientes...",
+                              onChange: _vm.getDatosCliente
                             }
                           })
                         ],
@@ -34086,8 +34097,8 @@ var render = function() {
                             {
                               name: "show",
                               rawName: "v-show",
-                              value: _vm.errorCompra,
-                              expression: "errorCompra"
+                              value: _vm.errorVenta,
+                              expression: "errorVenta"
                             }
                           ],
                           staticClass: "form-group row div-error"
@@ -34096,7 +34107,7 @@ var render = function() {
                           _c(
                             "div",
                             { staticClass: "text-center text-error" },
-                            _vm._l(_vm.errorMostrarMsjCompra, function(error) {
+                            _vm._l(_vm.errorMostrarMsjVenta, function(error) {
                               return _c("div", {
                                 key: error,
                                 domProps: { textContent: _vm._s(error) }
@@ -34307,6 +34318,34 @@ var render = function() {
                     _vm._v(" "),
                     _c("div", { staticClass: "col-md-2" }, [
                       _c("div", { staticClass: "form-group" }, [
+                        _c("label", [_vm._v("Descuento ")]),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.descuento,
+                              expression: "descuento"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: { type: "number", value: "0" },
+                          domProps: { value: _vm.descuento },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.descuento = $event.target.value
+                            }
+                          }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-md-2" }, [
+                      _c("div", { staticClass: "form-group" }, [
                         _c(
                           "button",
                           {
@@ -34331,7 +34370,7 @@ var render = function() {
                   _c("br"),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-group row border" }, [
-                    _c("h3", [_vm._v("Lista de Compras a Proveedores")]),
+                    _c("h3", [_vm._v("Lista de Ventas")]),
                     _vm._v(" "),
                     _c("div", { staticClass: "table-responsive col-md-12" }, [
                       _c(
@@ -34392,7 +34431,7 @@ var render = function() {
                                             }
                                           ],
                                           staticClass: "form-control",
-                                          attrs: { type: "number", value: "3" },
+                                          attrs: { type: "number" },
                                           domProps: { value: detalle.precio },
                                           on: {
                                             input: function($event) {
@@ -34420,7 +34459,7 @@ var render = function() {
                                             }
                                           ],
                                           staticClass: "form-control",
-                                          attrs: { type: "number", value: "2" },
+                                          attrs: { type: "number" },
                                           domProps: { value: detalle.cantidad },
                                           on: {
                                             input: function($event) {
@@ -34430,6 +34469,36 @@ var render = function() {
                                               _vm.$set(
                                                 detalle,
                                                 "cantidad",
+                                                $event.target.value
+                                              )
+                                            }
+                                          }
+                                        })
+                                      ]),
+                                      _vm._v(" "),
+                                      _c("td", [
+                                        _c("input", {
+                                          directives: [
+                                            {
+                                              name: "model",
+                                              rawName: "v-model",
+                                              value: detalle.descuento,
+                                              expression: "detalle.descuento"
+                                            }
+                                          ],
+                                          staticClass: "form-control",
+                                          attrs: { type: "number" },
+                                          domProps: {
+                                            value: detalle.descuento
+                                          },
+                                          on: {
+                                            input: function($event) {
+                                              if ($event.target.composing) {
+                                                return
+                                              }
+                                              _vm.$set(
+                                                detalle,
+                                                "descuento",
                                                 $event.target.value
                                               )
                                             }
@@ -34506,13 +34575,13 @@ var render = function() {
                           attrs: { type: "button" },
                           on: {
                             click: function($event) {
-                              return _vm.registrarCompra()
+                              return _vm.registrarVenta()
                             }
                           }
                         },
                         [
                           _c("i", { staticClass: "fa fa-save fa-2x" }),
-                          _vm._v(" Registrar Compra")
+                          _vm._v(" Registrar Venta")
                         ]
                       )
                     ])
@@ -35080,7 +35149,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("label", { staticClass: "text-uppercase" }, [
-      _c("strong", [_vm._v("Número Compra(*)")])
+      _c("strong", [_vm._v("Número Venta(*)")])
     ])
   },
   function() {
@@ -35088,7 +35157,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("label", { staticClass: "text-uppercase" }, [
-      _c("strong", [_vm._v("Proveedor(*)")])
+      _c("strong", [_vm._v("Cliente(*)")])
     ])
   },
   function() {
@@ -35105,6 +35174,8 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Cantidad")]),
         _vm._v(" "),
+        _c("th", [_vm._v("Descuento")]),
+        _vm._v(" "),
         _c("th", [_vm._v("Total")])
       ])
     ])
@@ -35113,7 +35184,7 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("td", { attrs: { colspan: "4", align: "right" } }, [
+    return _c("td", { attrs: { colspan: "5", align: "right" } }, [
       _c("strong", [_vm._v("Total:")])
     ])
   },
@@ -35122,7 +35193,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("tr", [
-      _c("td", { attrs: { colspan: "5" } }, [
+      _c("td", { attrs: { colspan: "6" } }, [
         _vm._v(
           "\n                                             No se han agregado productos\n                                         "
         )

@@ -136,20 +136,20 @@
 
                              <div class="col-md-8">
                                 <div class="form-group">
-                                    <label class="text-uppercase"><strong>Número Compra(*)</strong></label>
-                                    <input type="text" class="form-control" v-model="num_compra" placeholder="">
+                                    <label class="text-uppercase"><strong>Número Venta(*)</strong></label>
+                                    <input type="text" class="form-control" v-model="num_venta" placeholder="">
                                 </div>
                             </div>
 
                             <div class="col-md-8">
                                 <div class="form-group">
-                                    <label class="text-uppercase"><strong>Proveedor(*)</strong></label>
+                                    <label class="text-uppercase"><strong>Cliente(*)</strong></label>
                                     <v-select
-                                        :on-search="selectProveedor"
+                                        :on-search="selectCliente"
                                         label="nombre"
-                                        :options="arrayProveedor"
-                                        placeholder="Buscar Proveedores..."
-                                        :onChange="getDatosProveedor"
+                                        :options="arrayCliente"
+                                        placeholder="Buscar Clientes..."
+                                        :onChange="getDatosCliente"
                                     >
 
                                     </v-select>
@@ -161,9 +161,9 @@
                         <div class="form-group row">
 
                             <div class="col-md-12">
-                                    <div v-show="errorCompra" class="form-group row div-error">
+                                    <div v-show="errorVenta" class="form-group row div-error">
                                         <div class="text-center text-error">
-                                            <div v-for="error in errorMostrarMsjCompra" :key="error" v-text="error">
+                                            <div v-for="error in errorMostrarMsjVenta" :key="error" v-text="error">
 
                                             </div>
                                         </div>
@@ -202,6 +202,12 @@
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
+                                    <label>Descuento </label>
+                                    <input type="number" value="0" class="form-control" v-model="descuento">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
                                     <button @click="agregarDetalle()" class="btn btn-primary form-control btnagregar"><i class="fa fa-plus fa-2x"></i> Agregar detalle</button>
                                 </div>
                             </div>
@@ -211,7 +217,7 @@
 
                         <div class="form-group row border">
 
-                            <h3>Lista de Compras a Proveedores</h3>
+                            <h3>Lista de Ventas</h3>
 
                             <div class="table-responsive col-md-12">
                                 <table class="table table-bordered table-striped table-sm">
@@ -221,6 +227,7 @@
                                             <th>Producto</th>
                                             <th>Precio</th>
                                             <th>Cantidad</th>
+                                            <th>Descuento</th>
                                             <th>Total</th>
                                         </tr>
                                     </thead>
@@ -234,23 +241,26 @@
                                             <td v-text="detalle.producto">
                                             </td>
                                             <td>
-                                                <input v-model="detalle.precio" type="number" value="3" class="form-control">
+                                                <input v-model="detalle.precio" type="number" class="form-control">
                                             </td>
                                             <td>
-                                                <input v-model="detalle.cantidad" type="number" value="2" class="form-control">
+                                                <input v-model="detalle.cantidad" type="number" class="form-control">
+                                            </td>
+                                            <td>
+                                                <input v-model="detalle.descuento" type="number" class="form-control">
                                             </td>
                                             <td>
                                                 {{detalle.precio*detalle.cantidad}}
                                             </td>
                                         </tr>
                                         <tr style="background-color: grey;">
-                                            <td colspan="4" align="right"><strong>Total:</strong></td>
+                                            <td colspan="5" align="right"><strong>Total:</strong></td>
                                             <td><strong> MXN {{total=calcularTotal}}</strong></td>
                                         </tr>
                                     </tbody>
                                     <tbody v-else>
                                         <tr>
-                                            <td colspan="5">
+                                            <td colspan="6">
                                                 No se han agregado productos
                                             </td>
                                         </tr>
@@ -261,7 +271,7 @@
                         <div class="form-group row">
                             <div class="col-md-12">
                                 <button type="button" class="btn btn-danger" @click="ocultarDetalle()"><i class="fa fa-times fa-2x"></i> Cerrar</button>
-                                <button type="button" class="btn btn-success" @click="registrarCompra()"><i class="fa fa-save fa-2x"></i> Registrar Compra</button>
+                                <button type="button" class="btn btn-success" @click="registrarVenta()"><i class="fa fa-save fa-2x"></i> Registrar Venta</button>
                             </div>
                         </div>
                     </div>
@@ -497,7 +507,8 @@
                 codigo: '',
                 producto: '',
                 precio: 0,
-                cantidad: 0
+                cantidad: 0,
+                descuento:0
             }
 
         },
