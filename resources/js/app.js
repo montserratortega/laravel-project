@@ -28,6 +28,7 @@
  Vue.component('rol', require('./components/Rol.vue').default);
  Vue.component('user', require('./components/User.vue').default);
  Vue.component('compra', require('./components/Compra.vue').default);
+ Vue.component('venta', require('./components/Venta.vue').default);
 
  /**
   * Next, we will create a fresh Vue application instance and attach it to
