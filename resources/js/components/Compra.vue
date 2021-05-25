@@ -124,7 +124,7 @@
 
                     <!-- Detalle-->
 
-                    <template v-else>
+                    <template v-else-if="listado==0">
 
                     <span><strong>(*) Campo obligatorio</strong></span><br/>
 
@@ -268,6 +268,91 @@
                     </template>
 
                     <!-- Fin Detalle-->
+
+                    <!-- Ver Compra -->
+
+                    <template v-else-if="listado==2">
+
+                    <h2 class="text-center">Detalle de Compra</h2><br/>
+
+                       <div class="card-body">
+                            <div class="form-group row border">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="text-uppercase"><strong>Proveedor</strong></label>
+                                        <p v-text="proveedor"></p>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="text-uppercase"><strong>Número Compra</strong></label>
+                                        <p v-text="num_compra"></p>
+                                    </div>
+                                </div>
+
+                        </div>
+
+
+                    <div class="form-group row border">
+                        <div class="table-responsive col-md-12">
+                            <table class="table table-bordered table-striped table-sm">
+                                <thead>
+                                    <tr class="bg-success">
+                                        <th>Producto</th>
+                                        <th>Precio</th>
+                                        <th>Cantidad</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody v-if="arrayDetalle.length">
+                                    <tr v-for="detalle in arrayDetalle" :key="detalle.id">
+                                        <td v-text="detalle.producto">
+                                        </td>
+                                        <td v-text="detalle.precio">
+                                        </td>
+                                        <td v-text="detalle.cantidad">
+                                        </td>
+                                        <td>
+                                            {{detalle.precio*detalle.cantidad}}
+                                        </td>
+                                    </tr>
+                                    <tr style="background-color: grey;">
+                                        <td colspan="3" align="right"><strong>Sub-Total:</strong></td>
+                                        <td><strong>USD$ {{subTotal=(total-subTotalImpuesto).toFixed(2)}}</strong></td>
+                                    </tr>
+                                    <tr style="background-color: grey;">
+                                        <td colspan="3" align="right"><strong>Impuesto:</strong></td>
+                                        <td><strong>USD$ {{subTotalImpuesto=((total*impuesto)).toFixed(2)}}</strong></td>
+                                    </tr>
+                                    <tr style="background-color: grey;">
+                                        <td colspan="3" align="right"><strong>Total:</strong></td>
+                                        <td><strong>USD$ {{total}}</strong></td>
+                                    </tr>
+                                </tbody>
+                                <tbody v-else>
+                                    <tr>
+                                        <td colspan="4">
+                                            No se han agregado productos
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <button type="button" @click="ocultarDetalle()" class="btn btn-danger"><i class="fa fa-times fa-2x"></i> Cerrar</button>
+
+                        </div>
+                    </div>
+                 </div>
+
+
+                   </template>
+
+                  <!-- fin ver compra-->
+
 
                 </div>
                 <!-- Fin ejemplo de tabla Listado -->
@@ -695,6 +780,13 @@
             ocultarDetalle(){
 
                 this.listado=1;
+            },
+
+            verCompra(){
+
+                let me=this;
+                me.listado=2;
+
             },
 
            cerrarModal(){
