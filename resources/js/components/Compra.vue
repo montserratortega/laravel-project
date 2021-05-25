@@ -353,7 +353,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" @click="cerrarModal()" class="btn btn-danger"><i class="fa fa-times fa-2x"></i> Cerrar</button>
-                            <button type="button" @click="registrarUsuario()" v-if="tipoAccion==1" class="btn btn-success"><i class="fa fa-save fa-2x"></i> Guardar</button>
+                            <button type="button" @click="registrarCompra()" v-if="tipoAccion==1" class="btn btn-success"><i class="fa fa-save fa-2x"></i> Guardar</button>
                             <button type="button" @click="actualizarUsuario()" v-if="tipoAccion==2" class="btn btn-success"><i class="fa fa-save fa-2x"></i> Actualizar</button>
 
                         </div>
@@ -630,59 +630,66 @@
                 });
             },
 
-           registrarUsuario(){
-
-               if(this.validarUsuario()){
+           registrarCompra(){
+               if(this.validarCompra()){
 
                    return;
                }
 
-               let me=this;
+              let me = this;
 
-               var body = {
-                    'nombre': this.nombre,
-                    'direccion' : this.direccion,
-                    'telefono' : this.telefono,
-                    'email' : this.email,
-                    'usuario' : this.usuario,
-                    'password' : this.password,
-                    'idrol' : this.idrol
+                axios.post('/compra/registrar',{
+                    'idproveedor': this.idproveedor,
+                    'num_compra' : this.num_compra,
+                    'total' : this.total,
+                    'data': this.arrayDetalle
 
-               }
-
-               console.log('Body: ', body)
-
-               axios.post('/user/registrar', body).then(function (response) {
-                    // handle success
-                    //console.log(response);
-                    me.cerrarModal();
-                    me.listarUsuario(1,'','nombre');
+                }).then(function (response) {
+                    me.listado=1;
+                    me.listarCompra(1,'','num_compra');
+                    me.idproveedor=0;
+                    me.num_compra='';
+                    me.total=0.0;
+                    me.idproducto=0;
+                    me.producto='';
+                    me.cantidad=0;
+                    me.precio=0;
+                    me.arrayDetalle=[];
 
                 }).catch(function (error) {
-                    // handle error
                     console.log(error);
                 });
 
+
            },
 
-            validarUsuario(){
+            validarCompra(){
 
-                this.errorUsuario=0;
-                this.errorMostrarMsjUsuario =[];
+                this.errorCompra=0;
+                this.errorMostrarMsjCompra =[];
 
-                if (!this.nombre) this.errorMostrarMsjUsuario.push("(*)El nombre no puede estar vacío.");
-                if (!this.usuario) this.errorMostrarMsjUsuario.push("(*)El nombre del usuario no puede estar vacío.");
-                if (!this.password) this.errorMostrarMsjUsuario.push("(*)El password no puede estar vacío.");
-                if (this.idrol==0) this.errorMostrarMsjUsuario.push("(*)Debes seleccionar un rol para el usuario.");
+                if (this.idproveedor==0) this.errorMostrarMsjCompra.push("(*)Debes seleccionar un proveedor.");
+                if (!this.num_compra) this.errorMostrarMsjCompra.push("(*)Debes de ingresar numero de compra");
+                if (this.arrayDetalle.length<=0) this.errorMostrarMsjCompra.push("(*)Ingrese.");
 
-                if (this.errorMostrarMsjUsuario.length) this.errorUsuario = 1;
+                if (this.errorMostrarMsjCompra.length) this.errorCompra = 1;
 
-                return this.errorUsuario;
+                return this.errorCompra;
             },
 
             mostrarDetalle(){
 
-                this.listado=0;
+                let me = this;
+
+                    me.listado=0;
+                    me.idproveedor=0;
+                    me.num_compra='';
+                    me.total=0.0;
+                    me.idproducto=0;
+                    me.producto='';
+                    me.cantidad=0;
+                    me.precio=0;
+                    me.arrayDetalle=[];
             },
 
             ocultarDetalle(){
@@ -705,9 +712,8 @@
 
            },
 
-           desactivarUsuario(id){
-
-                const swalWithBootstrapButtons = Swal.mixin({
+           desactivarCompra(id){
+               const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
                     confirmButton: 'btn btn-success',
                     cancelButton: 'btn btn-danger'
@@ -716,7 +722,7 @@
                 })
 
                 swalWithBootstrapButtons.fire({
-                title: '¿Estas seguro de desactivar el usuario?',
+                title: '¿Estas seguro de desactivar la compra?',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: '<i class="fa fa-check fa-2x"></i> Aceptar',
@@ -727,13 +733,13 @@
 
                     let me=this;
 
-                axios.put('/user/desactivar',{
+                axios.put('/compra/desactivar',{
 
                     'id':id
 
                 }).then(function (response) {
                      //console.log(response);
-                     me.listarUsuario(1,'','nombre');
+                     me.listarCompra(1,'','nombre');
 
                      swalWithBootstrapButtons.fire(
                     'Desactivado',
@@ -754,57 +760,6 @@
                 }
                 })
             },
-
-            activarUsuario(id){
-
-                const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                    confirmButton: 'btn btn-success',
-                    cancelButton: 'btn btn-danger'
-                },
-                buttonsStyling: false
-                })
-
-                swalWithBootstrapButtons.fire({
-                title: '¿Estas seguro de activar el usuario?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: '<i class="fa fa-check fa-2x"></i> Aceptar',
-                cancelButtonText: '<i class="fa fa-times fa-2x"></i> Cancelar',
-                reverseButtons: true
-                }).then((result) => {
-                if (result.isConfirmed) {
-
-                    let me=this;
-
-                axios.put('/user/activar',{
-
-                    'id':id
-
-                }).then(function (response) {
-                     //console.log(response);
-                     me.listarUsuario(1,'','nombre');
-
-                     swalWithBootstrapButtons.fire(
-                    'Activado',
-                    'El registro del usuario ha sido activado',
-                    'success'
-                    )
-
-                }).catch(function (error) {
-                    console.log(error);
-                });
-
-
-                } else if (
-                    /* Read more about handling dismissals below */
-                    result.dismiss === Swal.DismissReason.cancel
-                ) {
-
-                }
-                })
-            },
-
 
         },
 

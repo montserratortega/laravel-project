@@ -3191,44 +3191,52 @@ __webpack_require__.r(__webpack_exports__);
         console.log(error);
       });
     },
-    registrarUsuario: function registrarUsuario() {
-      if (this.validarUsuario()) {
+    registrarCompra: function registrarCompra() {
+      if (this.validarCompra()) {
         return;
       }
 
       var me = this;
-      var body = {
-        'nombre': this.nombre,
-        'direccion': this.direccion,
-        'telefono': this.telefono,
-        'email': this.email,
-        'usuario': this.usuario,
-        'password': this.password,
-        'idrol': this.idrol
-      };
-      console.log('Body: ', body);
-      axios.post('/user/registrar', body).then(function (response) {
-        // handle success
-        //console.log(response);
-        me.cerrarModal();
-        me.listarUsuario(1, '', 'nombre');
+      axios.post('/compra/registrar', {
+        'idproveedor': this.idproveedor,
+        'num_compra': this.num_compra,
+        'total': this.total,
+        'data': this.arrayDetalle
+      }).then(function (response) {
+        me.listado = 1;
+        me.listarCompra(1, '', 'num_compra');
+        me.idproveedor = 0;
+        me.num_compra = '';
+        me.total = 0.0;
+        me.idproducto = 0;
+        me.producto = '';
+        me.cantidad = 0;
+        me.precio = 0;
+        me.arrayDetalle = [];
       })["catch"](function (error) {
-        // handle error
         console.log(error);
       });
     },
-    validarUsuario: function validarUsuario() {
-      this.errorUsuario = 0;
-      this.errorMostrarMsjUsuario = [];
-      if (!this.nombre) this.errorMostrarMsjUsuario.push("(*)El nombre no puede estar vacío.");
-      if (!this.usuario) this.errorMostrarMsjUsuario.push("(*)El nombre del usuario no puede estar vacío.");
-      if (!this.password) this.errorMostrarMsjUsuario.push("(*)El password no puede estar vacío.");
-      if (this.idrol == 0) this.errorMostrarMsjUsuario.push("(*)Debes seleccionar un rol para el usuario.");
-      if (this.errorMostrarMsjUsuario.length) this.errorUsuario = 1;
-      return this.errorUsuario;
+    validarCompra: function validarCompra() {
+      this.errorCompra = 0;
+      this.errorMostrarMsjCompra = [];
+      if (this.idproveedor == 0) this.errorMostrarMsjCompra.push("(*)Debes seleccionar un proveedor.");
+      if (!this.num_compra) this.errorMostrarMsjCompra.push("(*)Debes de ingresar numero de compra");
+      if (this.arrayDetalle.length <= 0) this.errorMostrarMsjCompra.push("(*)Ingrese.");
+      if (this.errorMostrarMsjCompra.length) this.errorCompra = 1;
+      return this.errorCompra;
     },
     mostrarDetalle: function mostrarDetalle() {
-      this.listado = 0;
+      var me = this;
+      me.listado = 0;
+      me.idproveedor = 0;
+      me.num_compra = '';
+      me.total = 0.0;
+      me.idproducto = 0;
+      me.producto = '';
+      me.cantidad = 0;
+      me.precio = 0;
+      me.arrayDetalle = [];
     },
     ocultarDetalle: function ocultarDetalle() {
       this.listado = 1;
@@ -3242,7 +3250,7 @@ __webpack_require__.r(__webpack_exports__);
       this.modal = 1;
       this.tituloModal = "Selecciona uno o varios productos";
     },
-    desactivarUsuario: function desactivarUsuario(id) {
+    desactivarCompra: function desactivarCompra(id) {
       var _this = this;
 
       var swalWithBootstrapButtons = Swal.mixin({
@@ -3253,7 +3261,7 @@ __webpack_require__.r(__webpack_exports__);
         buttonsStyling: false
       });
       swalWithBootstrapButtons.fire({
-        title: '¿Estas seguro de desactivar el usuario?',
+        title: '¿Estas seguro de desactivar la compra?',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: '<i class="fa fa-check fa-2x"></i> Aceptar',
@@ -3262,46 +3270,12 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (result) {
         if (result.isConfirmed) {
           var me = _this;
-          axios.put('/user/desactivar', {
+          axios.put('/compra/desactivar', {
             'id': id
           }).then(function (response) {
             //console.log(response);
-            me.listarUsuario(1, '', 'nombre');
+            me.listarCompra(1, '', 'nombre');
             swalWithBootstrapButtons.fire('Desactivado', 'El registro del usuario ha sido desactivado', 'success');
-          })["catch"](function (error) {
-            console.log(error);
-          });
-        } else if (
-        /* Read more about handling dismissals below */
-        result.dismiss === Swal.DismissReason.cancel) {}
-      });
-    },
-    activarUsuario: function activarUsuario(id) {
-      var _this2 = this;
-
-      var swalWithBootstrapButtons = Swal.mixin({
-        customClass: {
-          confirmButton: 'btn btn-success',
-          cancelButton: 'btn btn-danger'
-        },
-        buttonsStyling: false
-      });
-      swalWithBootstrapButtons.fire({
-        title: '¿Estas seguro de activar el usuario?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: '<i class="fa fa-check fa-2x"></i> Aceptar',
-        cancelButtonText: '<i class="fa fa-times fa-2x"></i> Cancelar',
-        reverseButtons: true
-      }).then(function (result) {
-        if (result.isConfirmed) {
-          var me = _this2;
-          axios.put('/user/activar', {
-            'id': id
-          }).then(function (response) {
-            //console.log(response);
-            me.listarUsuario(1, '', 'nombre');
-            swalWithBootstrapButtons.fire('Activado', 'El registro del usuario ha sido activado', 'success');
           })["catch"](function (error) {
             console.log(error);
           });
@@ -29555,7 +29529,7 @@ var render = function() {
                         attrs: { type: "button" },
                         on: {
                           click: function($event) {
-                            return _vm.registrarUsuario()
+                            return _vm.registrarCompra()
                           }
                         }
                       },
