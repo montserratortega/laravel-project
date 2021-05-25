@@ -598,7 +598,23 @@
            },
 
            agregarDetalleModal(data=[]){
+               let me=this;
 
+                if(me.encuentra(data['id'])){
+                        swal({
+                            type: 'error',
+                            title: 'Error...',
+                            text: 'Ese producto ya fue agregado',
+                            })
+                    }
+                    else{
+                       me.arrayDetalle.push({
+                            idproducto: data['id'],
+                            producto: data['nombre'],
+                            cantidad: 1,
+                            precio: 1
+                        });
+                    }
 
            },
 
@@ -683,6 +699,7 @@
 
            abrirModal(){
 
+               this.arrayProducto=[];
                this.modal = 1;
                this.tituloModal = "Selecciona uno o varios productos";
 

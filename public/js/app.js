@@ -3164,6 +3164,22 @@ __webpack_require__.r(__webpack_exports__);
     },
     agregarDetalleModal: function agregarDetalleModal() {
       var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+      var me = this;
+
+      if (me.encuentra(data['id'])) {
+        swal({
+          type: 'error',
+          title: 'Error...',
+          text: 'Ese producto ya fue agregado'
+        });
+      } else {
+        me.arrayDetalle.push({
+          idproducto: data['id'],
+          producto: data['nombre'],
+          cantidad: 1,
+          precio: 1
+        });
+      }
     },
     listarProducto: function listarProducto(buscar, criterio) {
       var me = this;
@@ -3222,6 +3238,7 @@ __webpack_require__.r(__webpack_exports__);
       this.tituloModal = "";
     },
     abrirModal: function abrirModal() {
+      this.arrayProducto = [];
       this.modal = 1;
       this.tituloModal = "Selecciona uno o varios productos";
     },
