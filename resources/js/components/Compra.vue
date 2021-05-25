@@ -285,17 +285,70 @@
 
                         <div class="modal-body">
 
-                            <div v-show="errorUsuario" class="form-group row div-error">
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <select class="form-control col-md-3" v-model="criterioP">
+                                      <option value="nombre">Producto</option>
+                                      <option value="codigo">Código</option>
 
-                                <div class="text-center text-error">
-
-                                    <div v-for="error in errorMostrarMsjUsuario" :key="error" v-text="error"></div>
-
+                                    </select>
+                                    <input type="text"  @keyup.enter="listarProducto(buscarP,criterioP);" v-model="buscarP" class="form-control" placeholder="Buscar texto">
+                                    <button type="submit"  @click="listarProducto(buscarP,criterioP);" class="btn btn-primary"><i class="fa fa-search"></i> Buscar</button>
                                 </div>
+                            </div>
+                        </div>
+
+                            <div class="table-responsive">
+
+                                <table class="table table-bordered table-striped table-sm">
+                                    <thead>
+                                        <tr class="bg-primary">
+
+                                            <th>Categoria</th>
+                                            <th>Producto</th>
+                                            <th>Codigo</th>
+                                            <th>Precio Venta</th>
+                                            <th>Stock</th>
+                                            <th>Estado</th>
+                                            <th>Accion</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        <tr v-for="producto in arrayProducto" :key="producto.id">
+
+                                            <td v-text="producto.nombre_categoria"></td>
+                                            <td v-text="producto.nombre"></td>
+                                            <td v-text="producto.codigo"></td>
+                                            <td v-text="producto.precio_venta"></td>
+                                            <td v-text="producto.stock"></td>
+
+                                            <td>
+                                                <button type="button" class="btn btn-success btn-md" v-if="producto.condicion">
+                                                    <i class="fa fa-check fa-2x"></i> Activo
+                                                </button>
+
+                                                <button type="button" class="btn btn-danger btn-md" v-else>
+                                                    <i class="fa fa-check fa-2x"></i> Desactivado
+                                                </button>
+
+                                            </td>
+
+                                            <td>
+
+                                                <button type="button" @click="agregarDetalleModal(producto)" class="btn btn-primary">
+                                                <i class="fa fa-plus fa-2x"></i> Agregar
+                                                </button>
+
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+
 
                             </div>
-
-
 
                         </div>
                         <div class="modal-footer">
@@ -353,6 +406,8 @@
                 offset:3,
                 criterio:'num_compra',
                 buscar:'',
+                criterioP:'nombre',
+                buscarP: '',
                 arrayProducto: [],
                 idproducto: 0,
                 codigo: '',
@@ -405,6 +460,15 @@
 
 
             }
+
+        },
+
+        calcularTotal: function(){
+            var resultado=0.0;
+            for(var i=0;i<this.arrayDetalle.length;i++){
+                resultado=resultado+(this.arrayDetalle[i].precio*this.arrayDetalle[i].cantidad)
+            }
+            return resultado;
 
         },
 
@@ -485,17 +549,70 @@
 
            },
 
-           agregarDetalle(){
-               let me=this;
+           encuentra(id){
+                var sw=0;
+                for(var i=0;i<this.arrayDetalle.length;i++){
+                    if(this.arrayDetalle[i].idproducto==id){
+                        sw=true;
+                    }
+                }
+                return sw;
+            },
 
-                    me.arrayDetalle.push({
-                        idproducto: me.idproducto,
-                        producto: me.producto,
-                        cantidad: me.cantidad,
-                        precio: me.precio
-                    });
+            eliminarDetalle(index){
+                let me = this;
+                me.arrayDetalle.splice(index, 1);
+
+            },
+
+           agregarDetalle(){
+                let me=this;
+                if(me.idproducto==0 || me.cantidad==0 || me.precio==0){
+                }
+
+                else{
+                    if(me.encuentra(me.idproducto)){
+                        swal({
+                            type: 'error',
+                            title: 'Error...',
+                            text: 'Ese producto ya fue agregado',
+                            })
+                    }
+                    else{
+                       me.arrayDetalle.push({
+                            idproducto: me.idproducto,
+                            producto: me.producto,
+                            cantidad: me.cantidad,
+                            precio: me.precio
+                        });
+                        me.codigo="";
+                        me.idproducto=0;
+                        me.producto="";
+                        me.cantidad=0;
+                        me.precio=0;
+                    }
+
+                }
+
 
            },
+
+           agregarDetalleModal(data=[]){
+
+
+           },
+
+           listarProducto (buscar,criterio){
+                let me=this;
+                var url= '/producto/listarProducto?buscar='+ buscar + '&criterio='+ criterio;
+                axios.get(url).then(function (response) {
+                    var respuesta= response.data;
+                    me.arrayProducto = respuesta.productos.data;
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+            },
 
            registrarUsuario(){
 
@@ -532,41 +649,6 @@
 
            },
 
-            actualizarUsuario(){
-
-                if(this.validarUsuario()){
-
-                   return;
-               }
-
-               let me=this;
-
-               var body = {
-                    'nombre': this.nombre,
-                    'direccion' : this.direccion,
-                    'telefono' : this.telefono,
-                    'email' : this.email,
-                    'usuario' : this.usuario,
-                    'password' : this.password,
-                    'idrol' : this.idrol,
-                    'id' : this.usuario_id
-               }
-
-               console.log('Body: ', body)
-
-               axios.put('/user/actualizar', body).then(function (response) {
-                    // handle success
-                    console.log(response);
-                    me.cerrarModal();
-                    me.listarUsuario(1,'','nombre');
-
-                }).catch(function (error) {
-                    // handle error
-                    console.log(error);
-                });
-
-            },
-
             validarUsuario(){
 
                 this.errorUsuario=0;
@@ -596,72 +678,13 @@
 
                 this.modal=0;
                 this.tituloModal="";
-                this.nombre="";
-                this.direccion="";
-                this.telefono="";
-                this.email="";
-                this.usuario="";
-                this.password="";
-                this.idrol=0;
-                this.errorUsuario=0;
 
            },
 
-           abrirModal(modelo,accion,data=[]){
+           abrirModal(){
 
-                this.selectRol();
-
-                 switch(modelo){
-
-                    case "usuario":
-
-                    {
-
-                        switch(accion){
-
-                            case "registrar":
-
-                                {
-
-                                    this.modal = 1;
-                                    this.tituloModal = "Agregar Usuario";
-                                    this.nombre= "";
-                                    this.direccion="";
-                                    this.telefono="";
-                                    this.email="";
-                                    this.usuario = "";
-                                    this.password="";
-                                    this.idrol=0;
-                                    this.tipoAccion = 1;
-                                    break;
-
-                                }
-
-                                case "actualizar":
-
-                                {
-                                    //console.log(data);
-                                    this.modal=1;
-                                    this.tituloModal="Editar Usuario";
-                                    this.tipoAccion=2;
-                                    this.usuario_id=data["id"];
-                                    this.nombre = data["nombre"];
-                                    this.direccion = data["direccion"];
-                                    this.telefono = data["telefono"];
-                                    this.email = data["email"];
-                                    this.usuario = data["usuario"];
-                                    this.password = data["password"];
-                                    this.idrol = data["idrol"];
-                                    break;
-                                }
-
-                        }
-
-
-                    }
-
-                }
-
+               this.modal = 1;
+               this.tituloModal = "Selecciona uno o varios productos";
 
            },
 

@@ -10,7 +10,7 @@ class ProductoController extends Controller
     //
     public function index(Request $request)
     {
-        if(!$request->ajax()) return redirect ('/');
+        if(!$request->ajax()) return redirect('/');
 
         $buscar= $request->buscar;
         $criterio= $request->criterio;
@@ -48,8 +48,34 @@ class ProductoController extends Controller
 
     }
 
+    public function listarProducto(Request $request)
+    {
+        if(!$request->ajax()) return redirect('/');
+
+        $buscar= $request->buscar;
+        $criterio= $request->criterio;
+
+        if($buscar==''){
+
+            $productos= Producto::join('categorias','productos.idcategoria','=','categorias.id')
+            ->select('productos.id','productos.idcategoria','productos.codigo','productos.nombre','categorias.nombre as nombre_categoria','productos.precio_venta','productos.stock','productos.condicion')
+            ->orderBy('productos.id','desc')->paginate(10);
+        } else{
+
+            $productos= Producto::join('categorias','productos.idcategoria','=','categorias.id')
+            ->select('productos.id','productos.idcategoria','productos.codigo','productos.nombre','categorias.nombre as nombre_categoria','productos.precio_venta','productos.stock','productos.condicion')
+            ->where('productos.'.$criterio, 'like', '%'. $buscar . '%')
+            ->orderBy('productos.id','desc')->paginate(10);
+        }
+
+
+        return['productos' => $productos];
+
+
+    }
+
     public function buscarProducto(Request $request){
-        if (!$request->ajax()) return redirect ('/');
+        if (!$request->ajax()) return redirect('/');
 
         $filtro = $request->filtro;
         $productos = Producto::where('codigo','=', $filtro)
@@ -61,7 +87,7 @@ class ProductoController extends Controller
     public function store(Request $request)
     {
         //
-        if(!$request->ajax()) return redirect ('/');
+        if(!$request->ajax()) return redirect('/');
         $producto= new Producto();
         $producto->idcategoria = $request->idcategoria;
         $producto->codigo = $request->codigo;
@@ -75,7 +101,7 @@ class ProductoController extends Controller
     public function update(Request $request)
     {
         //
-        if(!$request->ajax()) return redirect ('/');
+        if(!$request->ajax()) return redirect('/');
         $producto= Producto::findOrFail($request->id);
         $producto->idcategoria = $request->idcategoria;
         $producto->codigo = $request->codigo;
@@ -90,7 +116,7 @@ class ProductoController extends Controller
     public function desactivar(Request $request)
     {
         //
-        if(!$request->ajax()) return redirect ('/');
+        if(!$request->ajax()) return redirect('/');
         $producto= Producto::findOrFail($request->id);
         $producto->condicion= '0';
         $producto->save();
@@ -100,7 +126,7 @@ class ProductoController extends Controller
     public function activar(Request $request)
     {
         //
-        if(!$request->ajax()) return redirect ('/');
+        if(!$request->ajax()) return redirect('/');
         $producto= Producto::findOrFail($request->id);
         $producto->condicion= '1';
         $producto->save();
