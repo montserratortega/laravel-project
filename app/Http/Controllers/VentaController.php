@@ -75,7 +75,26 @@ class VentaController extends Controller
         return ['detalles' => $detalles];
     }
 
+    public function pdf(Request $request,$id){
 
+        $venta = Venta::join('clientes','ventas.idcliente','=','clientes.id')
+        ->join('users','ventas.idusuario','=','users.id')
+        ->select('ventas.id','ventas.num_venta','ventas.created_at','ventas.total',
+        'ventas.estado','clientes.nombre','clientes.direccion','clientes.email','clientes.telefono','users.usuario')
+        ->where('ventas.id','=',$id)
+        ->orderBy('ventas.id', 'desc')->take(1)->get();
+
+        $detalles = DetalleVenta::join('productos','detalle_ventas.idproducto','=','productos.id')
+        ->select('detalle_ventas.cantidad','detalle_ventas.precio','detalle_ventas.descuento',
+        'productos.nombre as producto')
+        ->where('detalle_ventas.idventa','=',$id)
+        ->orderBy('detalle_ventas.id', 'desc')->get();
+
+        $numventa=Venta::select('num_venta')->where('id',$id)->get();
+
+        $pdf= \PDF::loadView('pdf.venta',['venta'=>$venta,'detalles'=>$detalles]);
+        return $pdf->download('venta-'.$numventa[0]->num_venta.'.pdf');
+    }
 
     public function store(Request $request)
     {

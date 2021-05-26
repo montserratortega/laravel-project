@@ -5769,6 +5769,9 @@ __webpack_require__.r(__webpack_exports__);
         console.log(error);
       });
     },
+    pdfVenta: function pdfVenta(id) {
+      window.open('http://127.0.0.1:8000/venta/pdf/' + id + ',' + '_blank');
+    },
     cambiarPagina: function cambiarPagina(page, buscar, criterio) {
       var me = this; //Actualiza  la pagina actual
 

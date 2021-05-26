@@ -636,6 +636,12 @@
                 });
             },
 
+             pdfVenta(id){
+
+                 window.open('http://127.0.0.1:8000/venta/pdf/'+ id + ',' + '_blank');
+
+            },
+
             cambiarPagina(page,buscar,criterio){
 
                 let me = this;
