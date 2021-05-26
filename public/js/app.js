@@ -5793,17 +5793,25 @@ __webpack_require__.r(__webpack_exports__);
           console.log('ITS DA SAME BEACH');
           alert('Este producto ya ha sido agregado.');
         } else {
-          me.arrayDetalle.push({
-            idproducto: me.idproducto,
-            producto: me.producto,
-            cantidad: me.cantidad,
-            precio: me.precio
-          });
-          me.codigo = "";
-          me.idproducto = 0;
-          me.producto = "";
-          me.cantidad = 0;
-          me.precio = 0;
+          if (me.cantidad > me.stock) {
+            alert('No hay stock disponible');
+          } else {
+            me.arrayDetalle.push({
+              idproducto: me.idproducto,
+              producto: me.producto,
+              cantidad: me.cantidad,
+              precio: me.precio,
+              descuento: me.descuento,
+              stock: me.stock
+            });
+            me.codigo = "";
+            me.idproducto = 0;
+            me.producto = "";
+            me.cantidad = 0;
+            me.precio = 0;
+            me.descuento = 0;
+            me.stock = 0;
+          }
         }
       }
     },
