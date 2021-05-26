@@ -5621,6 +5621,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -5848,42 +5851,51 @@ __webpack_require__.r(__webpack_exports__);
         console.log(error);
       });
     },
-    registrarCompra: function registrarCompra() {
-      console.log('Test');
-
-      if (this.validarCompra()) {
+    registrarVenta: function registrarVenta() {
+      if (this.validarVenta()) {
         return;
       }
 
       var me = this;
-      axios.post('/compra/registrar', {
+      axios.post('/venta/registrar', {
         'idproveedor': this.idproveedor,
-        'num_compra': this.num_compra,
+        'num_venta': this.num_venta,
         'total': this.total,
         'data': this.arrayDetalle
       }).then(function (response) {
         me.listado = 1;
-        me.listarCompra(1, '', 'num_compra');
-        me.idproveedor = 0;
-        me.num_compra = '';
+        me.listarVenta(1, '', 'num_venta');
+        me.idcliente = 0;
+        me.num_venta = '';
         me.total = 0.0;
         me.idproducto = 0;
         me.producto = '';
         me.cantidad = 0;
         me.precio = 0;
+        me.stock = 0;
+        me.codigo = '';
+        me.descuento = 0;
         me.arrayDetalle = [];
       })["catch"](function (error) {
         console.log(error);
       });
     },
-    validarCompra: function validarCompra() {
-      this.errorCompra = 0;
-      this.errorMostrarMsjCompra = [];
-      if (this.idproveedor == 0) this.errorMostrarMsjCompra.push("Seleccione un Proveedor");
-      if (!this.num_compra) this.errorMostrarMsjCompra.push("Ingrese el número de compra");
-      if (this.arrayDetalle.length <= 0) this.errorMostrarMsjCompra.push("Ingrese detalles");
-      if (this.errorMostrarMsjCompra.length) this.errorCompra = 1;
-      return this.errorCompra;
+    validarVenta: function validarVenta() {
+      var me = this;
+      me.errorVenta = 0;
+      me.errorMostrarMsjVenta = [];
+      var prod;
+      me.arrayDetalle.map(function (x) {
+        if (x.cantidad > x.stock) {
+          prod = x.producto + " con stock insuficiente";
+          me.errorMostrarMsjVenta.push(prod);
+        }
+      });
+      if (me.idcliente == 0) me.errorMostrarMsjVenta.push("Seleccione un Cliente");
+      if (!me.num_venta) me.errorMostrarMsjVenta.push("Ingrese el número de venta");
+      if (me.arrayDetalle.length <= 0) me.errorMostrarMsjVenta.push("Ingrese detalles");
+      if (me.errorMostrarMsjVenta.length) me.errorVenta = 1;
+      return me.errorVenta;
     },
     mostrarDetalle: function mostrarDetalle() {
       var me = this;
@@ -5900,23 +5912,23 @@ __webpack_require__.r(__webpack_exports__);
     ocultarDetalle: function ocultarDetalle() {
       this.listado = 1;
     },
-    verCompra: function verCompra(id) {
+    verVenta: function verVenta(id) {
       var me = this;
       me.listado = 2; //Obtener los datos de la compra
 
-      var arrayCompraT = [];
-      var url = '/compra/obtenerCabecera?id=' + id;
+      var arrayVentaT = [];
+      var url = '/venta/obtenerCabecera?id=' + id;
       axios.get(url).then(function (response) {
         var respuesta = response.data;
-        arrayCompraT = respuesta.compra;
-        me.proveedor = arrayCompraT[0]['nombre'];
-        me.num_compra = arrayCompraT[0]['num_compra'];
-        me.total = arrayCompraT[0]['total'];
+        arrayVentaT = respuesta.venta;
+        me.cliente = arrayVentaT[0]['nombre'];
+        me.num_venta = arrayVentaT[0]['num_venta'];
+        me.total = arrayVentaT[0]['total'];
       })["catch"](function (error) {
         console.log(error);
       }); //Obtener los datos de los detalles
 
-      var urld = '/compra/obtenerDetalles?id=' + id;
+      var urld = '/venta/obtenerDetalles?id=' + id;
       axios.get(urld).then(function (response) {
         console.log(response);
         var respuesta = response.data;
@@ -35000,7 +35012,7 @@ var render = function() {
             : _vm.listado == 2
             ? [
                 _c("h2", { staticClass: "text-center" }, [
-                  _vm._v("Detalle de Compra")
+                  _vm._v("Detalle de Venta")
                 ]),
                 _c("br"),
                 _vm._v(" "),
@@ -35011,7 +35023,7 @@ var render = function() {
                         _vm._m(9),
                         _vm._v(" "),
                         _c("p", {
-                          domProps: { textContent: _vm._s(_vm.proveedor) }
+                          domProps: { textContent: _vm._s(_vm.cliente) }
                         })
                       ])
                     ]),
@@ -35021,7 +35033,7 @@ var render = function() {
                         _vm._m(10),
                         _vm._v(" "),
                         _c("p", {
-                          domProps: { textContent: _vm._s(_vm.num_compra) }
+                          domProps: { textContent: _vm._s(_vm.num_venta) }
                         })
                       ])
                     ])
@@ -35062,11 +35074,19 @@ var render = function() {
                                         }
                                       }),
                                       _vm._v(" "),
+                                      _c("td", {
+                                        domProps: {
+                                          textContent: _vm._s(detalle.descuento)
+                                        }
+                                      }),
+                                      _vm._v(" "),
                                       _c("td", [
                                         _vm._v(
                                           "\n                                         " +
                                             _vm._s(
-                                              detalle.precio * detalle.cantidad
+                                              detalle.precio *
+                                                detalle.cantidad -
+                                                detalle.descuento
                                             ) +
                                             "\n                                     "
                                         )
@@ -35407,7 +35427,7 @@ var render = function() {
                         attrs: { type: "button" },
                         on: {
                           click: function($event) {
-                            return _vm.registrarCompra()
+                            return _vm.registrarUsuario()
                           }
                         }
                       },
@@ -35563,7 +35583,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("label", { staticClass: "text-uppercase" }, [
-      _c("strong", [_vm._v("Proveedor")])
+      _c("strong", [_vm._v("Cliente")])
     ])
   },
   function() {
@@ -35571,7 +35591,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("label", { staticClass: "text-uppercase" }, [
-      _c("strong", [_vm._v("Número Compra")])
+      _c("strong", [_vm._v("Número Venta")])
     ])
   },
   function() {
@@ -35586,6 +35606,8 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Cantidad")]),
         _vm._v(" "),
+        _c("th", [_vm._v("Descuento")]),
+        _vm._v(" "),
         _c("th", [_vm._v("Total")])
       ])
     ])
@@ -35594,7 +35616,7 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("td", { attrs: { colspan: "3", align: "right" } }, [
+    return _c("td", { attrs: { colspan: "4", align: "right" } }, [
       _c("strong", [_vm._v("Total:")])
     ])
   },
@@ -35603,7 +35625,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("tr", [
-      _c("td", { attrs: { colspan: "4" } }, [
+      _c("td", { attrs: { colspan: "5" } }, [
         _vm._v(
           "\n                                         No se han agregado productos\n                                     "
         )

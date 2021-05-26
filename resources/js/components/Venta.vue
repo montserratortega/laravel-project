@@ -284,21 +284,21 @@
 
                     <template v-else-if="listado==2">
 
-                    <h2 class="text-center">Detalle de Compra</h2><br/>
+                    <h2 class="text-center">Detalle de Venta</h2><br/>
 
                        <div class="card-body">
                             <div class="form-group row border">
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label class="text-uppercase"><strong>Proveedor</strong></label>
-                                        <p v-text="proveedor"></p>
+                                        <label class="text-uppercase"><strong>Cliente</strong></label>
+                                        <p v-text="cliente"></p>
                                     </div>
                                 </div>
 
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label class="text-uppercase"><strong>Número Compra</strong></label>
-                                        <p v-text="num_compra"></p>
+                                        <label class="text-uppercase"><strong>Número Venta</strong></label>
+                                        <p v-text="num_venta"></p>
                                     </div>
                                 </div>
 
@@ -313,6 +313,7 @@
                                         <th>Producto</th>
                                         <th>Precio</th>
                                         <th>Cantidad</th>
+                                        <th>Descuento</th>
                                         <th>Total</th>
                                     </tr>
                                 </thead>
@@ -324,19 +325,21 @@
                                         </td>
                                         <td v-text="detalle.cantidad">
                                         </td>
+                                        <td v-text="detalle.descuento">
+                                        </td>
                                         <td>
-                                            {{detalle.precio*detalle.cantidad}}
+                                            {{detalle.precio*detalle.cantidad - detalle.descuento}}
                                         </td>
                                     </tr>
 
                                     <tr style="background-color: grey;">
-                                        <td colspan="3" align="right"><strong>Total:</strong></td>
+                                        <td colspan="4" align="right"><strong>Total:</strong></td>
                                         <td><strong>$ {{total}}</strong></td>
                                     </tr>
                                 </tbody>
                                 <tbody v-else>
                                     <tr>
-                                        <td colspan="4">
+                                        <td colspan="5">
                                             No se han agregado productos
                                         </td>
                                     </tr>
@@ -442,7 +445,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" @click="cerrarModal()" class="btn btn-danger"><i class="fa fa-times fa-2x"></i> Cerrar</button>
-                            <button type="button" @click="registrarCompra()" v-if="tipoAccion==1" class="btn btn-success"><i class="fa fa-save fa-2x"></i> Guardar</button>
+                            <button type="button" @click="registrarUsuario()" v-if="tipoAccion==1" class="btn btn-success"><i class="fa fa-save fa-2x"></i> Guardar</button>
                             <button type="button" @click="actualizarUsuario()" v-if="tipoAccion==2" class="btn btn-success"><i class="fa fa-save fa-2x"></i> Actualizar</button>
 
                         </div>
@@ -739,31 +742,34 @@
                     });
             },
 
-            registrarCompra(){
-                console.log('Test')
-               if(this.validarCompra()){
+            registrarVenta(){
+
+               if(this.validarVenta()){
 
                    return;
                }
 
               let me = this;
 
-                axios.post('/compra/registrar',{
+                axios.post('/venta/registrar',{
                     'idproveedor': this.idproveedor,
-                    'num_compra' : this.num_compra,
+                    'num_venta' : this.num_venta,
                     'total' : this.total,
                     'data': this.arrayDetalle
 
                 }).then(function (response) {
                     me.listado=1;
-                    me.listarCompra(1,'','num_compra');
-                    me.idproveedor=0;
-                    me.num_compra='';
+                    me.listarVenta(1,'','num_venta');
+                    me.idcliente=0;
+                    me.num_venta='';
                     me.total=0.0;
                     me.idproducto=0;
                     me.producto='';
                     me.cantidad=0;
                     me.precio=0;
+                    me.stock=0;
+                    me.codigo='';
+                    me.descuento=0;
                     me.arrayDetalle=[];
 
                 }).catch(function (error) {
@@ -773,18 +779,27 @@
 
             },
 
-            validarCompra(){
+            validarVenta(){
 
-               this.errorCompra=0;
-               this.errorMostrarMsjCompra =[];
+                let me=this;
+                me.errorVenta=0;
+                me.errorMostrarMsjVenta =[];
+                var prod;
 
-                if (this.idproveedor==0) this.errorMostrarMsjCompra.push("Seleccione un Proveedor");
-                if (!this.num_compra) this.errorMostrarMsjCompra.push("Ingrese el número de compra");
-                if (this.arrayDetalle.length<=0) this.errorMostrarMsjCompra.push("Ingrese detalles");
+                me.arrayDetalle.map(function(x){
+                    if (x.cantidad>x.stock){
+                        prod=x.producto + " con stock insuficiente";
+                        me.errorMostrarMsjVenta.push(prod);
+                    }
+                });
 
-                if (this.errorMostrarMsjCompra.length) this.errorCompra = 1;
+                if (me.idcliente==0) me.errorMostrarMsjVenta.push("Seleccione un Cliente");
+                if (!me.num_venta) me.errorMostrarMsjVenta.push("Ingrese el número de venta");
+                if (me.arrayDetalle.length<=0) me.errorMostrarMsjVenta.push("Ingrese detalles");
 
-                return this.errorCompra;
+                if (me.errorMostrarMsjVenta.length) me.errorVenta = 1;
+
+                return me.errorVenta;
             },
 
             mostrarDetalle(){
@@ -807,29 +822,29 @@
                 this.listado=1;
             },
 
-            verCompra(id){
+            verVenta(id){
 
                 let me=this;
                 me.listado=2;
 
                  //Obtener los datos de la compra
-                var arrayCompraT=[];
-                var url= '/compra/obtenerCabecera?id=' + id;
+                var arrayVentaT=[];
+                var url= '/venta/obtenerCabecera?id=' + id;
 
                 axios.get(url).then(function (response) {
                     var respuesta= response.data;
-                    arrayCompraT = respuesta.compra;
+                    arrayVentaT = respuesta.venta;
 
-                    me.proveedor = arrayCompraT[0]['nombre'];
-                    me.num_compra=arrayCompraT[0]['num_compra'];
-                    me.total=arrayCompraT[0]['total'];
+                    me.cliente = arrayVentaT[0]['nombre'];
+                    me.num_venta=arrayVentaT[0]['num_venta'];
+                    me.total=arrayVentaT[0]['total'];
                 })
                 .catch(function (error) {
                     console.log(error);
                 });
 
                 //Obtener los datos de los detalles
-                var urld= '/compra/obtenerDetalles?id=' + id;
+                var urld= '/venta/obtenerDetalles?id=' + id;
 
                 axios.get(urld).then(function (response) {
                     console.log(response);
