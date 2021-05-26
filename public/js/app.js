@@ -3943,10 +3943,8 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       var swalWithBootstrapButtons = Swal.mixin({
-        customClass: {
-          confirmButton: 'btn btn-success',
-          cancelButton: 'btn btn-danger'
-        },
+        confirmButtonClass: 'btn btn-success',
+        cancelButtonClass: 'btn btn-danger',
         buttonsStyling: false
       });
       swalWithBootstrapButtons.fire({
@@ -3982,7 +3980,7 @@ __webpack_require__.r(__webpack_exports__);
         cancelButtonClass: 'btn btn-danger',
         buttonsStyling: false
       });
-      swalWithBootstrapButtons({
+      swalWithBootstrapButtons.fire({
         title: 'Estas seguro de activar el producto?',
         //type: 'warning',
         showCancelButton: true,

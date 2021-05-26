@@ -428,11 +428,9 @@
 
             desactivarProducto(id){
                 const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                    confirmButton: 'btn btn-success',
-                    cancelButton: 'btn btn-danger'
-                },
-                buttonsStyling: false
+                    confirmButtonClass: 'btn btn-success',
+                    cancelButtonClass: 'btn btn-danger',
+                    buttonsStyling: false,
                 })
 
                 swalWithBootstrapButtons.fire({
@@ -480,57 +478,47 @@
 
             },
 
-             activarProducto(id){
+            activarProducto(id){
 
                 const swalWithBootstrapButtons = Swal.mixin({
-                confirmButtonClass: 'btn btn-success',
-                cancelButtonClass: 'btn btn-danger',
-                buttonsStyling: false,
+                    confirmButtonClass: 'btn btn-success',
+                    cancelButtonClass: 'btn btn-danger',
+                    buttonsStyling: false,
                 })
 
-                swalWithBootstrapButtons({
-                title: 'Estas seguro de activar el producto?',
-                //type: 'warning',
-                showCancelButton: true,
-                confirmButtonText: '<i class="fa fa-check fa-2x"></i> Aceptar',
-                cancelButtonText: '<i class="fa fa-times fa-2x"></i> Cancelar',
-                reverseButtons: true
+                swalWithBootstrapButtons.fire({
+                    title: 'Estas seguro de activar el producto?',
+                    //type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: '<i class="fa fa-check fa-2x"></i> Aceptar',
+                    cancelButtonText: '<i class="fa fa-times fa-2x"></i> Cancelar',
+                    reverseButtons: true
                 }).then((result) => {
-                if (result.value) {
+                    if (result.value) {
+                        let me=this;
+                        axios.put('/producto/activar',{
+                            'id':id
+                        }).then(function (response) {
+                                // handle success
+                                //console.log(response);
+                                me.listarProducto(1,'','nombre');
 
-                  let me=this;
+                                swalWithBootstrapButtons(
+                                'Activado!',
+                                'El registro ha sido activado con exito.',
+                                'success'
+                            )
 
-               axios.put('/producto/activar',{
-
-                 'id':id
-
-
-               }).then(function (response) {
-                    // handle success
-                    //console.log(response);
-                    me.listarProducto(1,'','nombre');
-
-                     swalWithBootstrapButtons(
-                    'Activado!',
-                    'El registro ha sido activado con exito.',
-                    'success'
-                )
-
-                }).catch(function (error) {
-                    // handle error
-                    console.log(error);
-                });
-
-
-
-                } else if (
-                // Read more about handling dismissals
-                result.dismiss === Swal.DismissReason.cancel
-                ) {
-
-                }
-              })
-
+                            }).catch(function (error) {
+                                // handle error
+                                console.log(error);
+                            });
+                    } else if (
+                    // Read more about handling dismissals
+                    result.dismiss === Swal.DismissReason.cancel
+                    ) {
+                    }
+                })
             },
 
             validarProducto(){
