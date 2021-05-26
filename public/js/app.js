@@ -5619,6 +5619,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -5700,7 +5702,7 @@ __webpack_require__.r(__webpack_exports__);
       var resultado = 0.0;
 
       for (var i = 0; i < this.arrayDetalle.length; i++) {
-        resultado = resultado + this.arrayDetalle[i].precio * this.arrayDetalle[i].cantidad;
+        resultado = resultado + (this.arrayDetalle[i].precio * this.arrayDetalle[i].cantidad - this.arrayDetalle[i].descuento);
       }
 
       return resultado;
@@ -5830,7 +5832,9 @@ __webpack_require__.r(__webpack_exports__);
           idproducto: data['id'],
           producto: data['nombre'],
           cantidad: 1,
-          precio: 1
+          precio: data['precio_venta'],
+          descuento: 0,
+          stock: data['stock']
         });
       }
     },
@@ -34805,6 +34809,29 @@ var render = function() {
                                       ]),
                                       _vm._v(" "),
                                       _c("td", [
+                                        _c(
+                                          "span",
+                                          {
+                                            directives: [
+                                              {
+                                                name: "show",
+                                                rawName: "v-show",
+                                                value:
+                                                  detalle.cantidad >
+                                                  detalle.stock,
+                                                expression:
+                                                  "detalle.cantidad>detalle.stock"
+                                              }
+                                            ],
+                                            staticStyle: { color: "red" }
+                                          },
+                                          [
+                                            _vm._v(
+                                              "Stock: " + _vm._s(detalle.stock)
+                                            )
+                                          ]
+                                        ),
+                                        _vm._v(" "),
                                         _c("input", {
                                           directives: [
                                             {
@@ -34833,6 +34860,30 @@ var render = function() {
                                       ]),
                                       _vm._v(" "),
                                       _c("td", [
+                                        _c(
+                                          "span",
+                                          {
+                                            directives: [
+                                              {
+                                                name: "show",
+                                                rawName: "v-show",
+                                                value:
+                                                  detalle.descuento >
+                                                  detalle.precio *
+                                                    detalle.cantidad,
+                                                expression:
+                                                  "detalle.descuento>(detalle.precio*detalle.cantidad)"
+                                              }
+                                            ],
+                                            staticStyle: { color: "red" }
+                                          },
+                                          [
+                                            _vm._v(
+                                              "Descuento superior al total"
+                                            )
+                                          ]
+                                        ),
+                                        _vm._v(" "),
                                         _c("input", {
                                           directives: [
                                             {
@@ -34866,7 +34917,9 @@ var render = function() {
                                         _vm._v(
                                           "\n                                             " +
                                             _vm._s(
-                                              detalle.precio * detalle.cantidad
+                                              detalle.precio *
+                                                detalle.cantidad -
+                                                detalle.descuento
                                             ) +
                                             "\n                                         "
                                         )
@@ -35489,7 +35542,7 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("td", { attrs: { colspan: "4", align: "right" } }, [
+    return _c("td", { attrs: { colspan: "5", align: "right" } }, [
       _c("strong", [_vm._v("Total:")])
     ])
   },

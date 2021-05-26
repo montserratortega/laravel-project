@@ -243,17 +243,19 @@
                                                 <input v-model="detalle.precio" type="number" class="form-control">
                                             </td>
                                             <td>
+                                                <span style="color:red;" v-show="detalle.cantidad>detalle.stock">Stock: {{detalle.stock}}</span>
                                                 <input v-model="detalle.cantidad" type="number" class="form-control">
                                             </td>
                                             <td>
+                                                <span style="color:red;" v-show="detalle.descuento>(detalle.precio*detalle.cantidad)">Descuento superior al total</span>
                                                 <input v-model="detalle.descuento" type="number" class="form-control">
                                             </td>
                                             <td>
-                                                {{detalle.precio*detalle.cantidad}}
+                                                {{detalle.precio*detalle.cantidad-detalle.descuento}}
                                             </td>
                                         </tr>
                                         <tr style="background-color: grey;">
-                                            <td colspan="4" align="right"><strong>Total:</strong></td>
+                                            <td colspan="5" align="right"><strong>Total:</strong></td>
                                             <td><strong> $ {{total=calcularTotal}}</strong></td>
                                         </tr>
                                     </tbody>
@@ -553,7 +555,7 @@
             calcularTotal: function(){
                 var resultado=0.0;
                 for(var i=0;i<this.arrayDetalle.length;i++){
-                    resultado=resultado+(this.arrayDetalle[i].precio*this.arrayDetalle[i].cantidad)
+                    resultado=resultado+(this.arrayDetalle[i].precio*this.arrayDetalle[i].cantidad-this.arrayDetalle[i].descuento)
                 }
                 return resultado;
 
@@ -717,7 +719,9 @@
                                 idproducto: data['id'],
                                 producto: data['nombre'],
                                 cantidad: 1,
-                                precio: 1,
+                                precio: data['precio_venta'],
+                                descuento:0,
+                                stock:data['stock']
                             });
                         }
 
