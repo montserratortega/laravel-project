@@ -63,6 +63,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('/compra/desactivar', 'CompraController@desactivar');
         Route::get('/compra/obtenerCabecera', 'CompraController@obtenerCabecera');
         Route::get('/compra/obtenerDetalles', 'CompraController@obtenerDetalles');
+        Route::get('/compra/pdf/{id}', 'CompraController@pdf')->name('compra_pdf');
+
 
     });
 
@@ -130,6 +132,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('/compra/desactivar', 'CompraController@desactivar');
         Route::get('/compra/obtenerCabecera', 'CompraController@obtenerCabecera');
         Route::get('/compra/obtenerDetalles', 'CompraController@obtenerDetalles');
+        Route::get('/compra/pdf/{id}', 'CompraController@pdf')->name('compra_pdf');
 
         Route::get('/cliente', 'ClienteController@index');
         Route::post('/cliente/registrar', 'ClienteController@store');

@@ -72,6 +72,28 @@ class CompraController extends Controller
         return ['detalles' => $detalles];
     }
 
+    public function pdf(Request $request,$id){
+
+        $compra = Compra::join('proveedores','compras.idproveedor','=','proveedores.id')
+        ->join('users','compras.idusuario','=','users.id')
+        ->select('compras.id','compras.num_compra','compras.created_at','compras.total',
+        'compras.estado','proveedores.nombre','proveedores.direccion','proveedores.email','proveedores.telefono','users.usuario')
+        ->where('compras.id','=',$id)
+        ->orderBy('compras.id', 'desc')->take(1)->get();
+
+        $detalles = DetalleCompra::join('productos','detalle_compras.idproducto','=','productos.id')
+        ->select('detalle_compras.cantidad','detalle_compras.precio',
+        'productos.nombre as producto')
+        ->where('detalle_compras.idcompra','=',$id)
+        ->orderBy('detalle_compras.id', 'desc')->get();
+
+        $numcompra=Compra::select('num_compra')->where('id',$id)->get();
+
+        $pdf= \PDF::loadView('pdf.compra',['compra'=>$compra,'detalles'=>$detalles]);
+        return $pdf->download('compra-'.$numcompra[0]->num_compra.'.pdf');
+    }
+
+
     public function store(Request $request)
     {
         if (!$request->ajax()) return redirect('/');
