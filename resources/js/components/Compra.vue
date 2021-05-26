@@ -145,14 +145,12 @@
                                 <div class="form-group">
                                     <label class="text-uppercase"><strong>Proveedor(*)</strong></label>
                                     <v-select
-                                        :on-search="selectProveedor"
+                                        @search="selectProveedor"
                                         label="nombre"
                                         :options="arrayProveedor"
-                                        placeholder="Buscar Proveedores..."
+                                        placeholder="Buscar Proveedores"
                                         :onChange="getDatosProveedor"
-                                    >
-
-                                    </v-select>
+                                    > </v-select>
                                 </div>
                             </div>
 
@@ -456,6 +454,7 @@
 <script>
 
     import vSelect from 'vue-select';
+    import 'vue-select/dist/vue-select.css';
 
     export default {
         data(){
@@ -498,7 +497,8 @@
                 codigo: '',
                 producto: '',
                 precio: 0,
-                cantidad: 0
+                cantidad: 0,
+                search: '',
             }
 
         },
@@ -544,54 +544,56 @@
                 return pagesArray;
 
 
-            }
+            },
 
-        },
+            calcularTotal: function(){
+                var resultado=0.0;
+                for(var i=0;i<this.arrayDetalle.length;i++){
+                    resultado=resultado+(this.arrayDetalle[i].precio*this.arrayDetalle[i].cantidad)
+                }
+                return resultado;
 
-        calcularTotal: function(){
-            var resultado=0.0;
-            for(var i=0;i<this.arrayDetalle.length;i++){
-                resultado=resultado+(this.arrayDetalle[i].precio*this.arrayDetalle[i].cantidad)
-            }
-            return resultado;
+            },
 
         },
 
         methods:{
 
-           listarCompra(page,buscar,criterio){
+            listarCompra(page,buscar,criterio){
 
-               let me=this;
-
-               var url= '/compra?page=' + page + '&buscar='+ buscar + '&criterio='+criterio;
-
-               axios.get(url).then(function (response) {
-                    // handle success
-                    //console.log(response);
-                    var respuesta = response.data;
-                    me.arrayCompra=respuesta.compras.data;
-                    me.pagination= respuesta.pagination;
-                })
-                .catch(function (error) {
-                    // handle error
-                    console.log(error);
-                });
-           },
-
-           selectProveedor(search,loading){
                 let me=this;
-                loading(true)
 
-                var url= '/proveedor/selectProveedor?filtro='+search;
+                var url= '/compra?page=' + page + '&buscar='+ buscar + '&criterio='+criterio;
+
                 axios.get(url).then(function (response) {
-                    let respuesta = response.data;
-                    q: search
-                    me.arrayProveedor=respuesta.proveedores;
-                    loading(false)
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
+                        // handle success
+                        //console.log(response);
+                        var respuesta = response.data;
+                        me.arrayCompra=respuesta.compras.data;
+                        me.pagination= respuesta.pagination;
+                    })
+                    .catch(function (error) {
+                        // handle error
+                        console.log(error);
+                    });
+            },
+
+            selectProveedor(search,loading){
+                console.log('Hi')
+                    let me=this;
+                    loading(true)
+
+                    var url= '/proveedor/selectProveedor?filtro='+search;
+                    axios.get(url).then(function (response) {
+                        console.log(response);
+                        let respuesta = response.data;
+                        q: search
+                        me.arrayProveedor=respuesta.proveedores;
+                        loading(false)
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
             },
 
             getDatosProveedor(val1){
@@ -622,26 +624,26 @@
                 });
             },
 
-           cambiarPagina(page,buscar,criterio){
+            cambiarPagina(page,buscar,criterio){
 
-              let me = this;
+                let me = this;
 
-              //Actualiza  la pagina actual
+                //Actualiza  la pagina actual
 
-               me.pagination.current_page=page;
+                me.pagination.current_page=page;
 
-               me.listarCompra(page,buscar,criterio);
+                me.listarCompra(page,buscar,criterio);
 
-           },
+            },
 
-           encuentra(id){
-                var sw=0;
-                for(var i=0;i<this.arrayDetalle.length;i++){
-                    if(this.arrayDetalle[i].idproducto==id){
-                        sw=true;
+            encuentra(id){
+                    var sw=0;
+                    for(var i=0;i<this.arrayDetalle.length;i++){
+                        if(this.arrayDetalle[i].idproducto==id){
+                            sw=true;
+                        }
                     }
-                }
-                return sw;
+                    return sw;
             },
 
             eliminarDetalle(index){
@@ -650,18 +652,20 @@
 
             },
 
-           agregarDetalle(){
-                let me=this;
+            agregarDetalle(){
+               let me=this;
                 if(me.idproducto==0 || me.cantidad==0 || me.precio==0){
                 }
 
                 else{
                     if(me.encuentra(me.idproducto)){
-                        swal({
-                            type: 'error',
-                            title: 'Error...',
-                            text: 'Ese producto ya fue agregado',
-                            })
+                        console.log('ITS DA SAME BEACH')
+                        alert('Este producto ya ha sido agregado.')
+                        // Swal.mixin({
+                        //     type: 'error',
+                        //     title: 'Error...',
+                        //     text: 'Ese producto ya fue agregado',
+                        // })
                     }
                     else{
                        me.arrayDetalle.push({
@@ -678,75 +682,73 @@
                     }
 
                 }
-
-
-           },
-
-           agregarDetalleModal(data=[]){
-               let me=this;
-
-                if(me.encuentra(data['id'])){
-                        swal({
-                            type: 'error',
-                            title: 'Error...',
-                            text: 'Ese producto ya fue agregado',
-                            })
-                    }
-                    else{
-                       me.arrayDetalle.push({
-                            idproducto: data['id'],
-                            producto: data['nombre'],
-                            cantidad: 1,
-                            precio: 1
-                        });
-                    }
-
-           },
-
-           listarProducto (buscar,criterio){
-                let me=this;
-                var url= '/producto/listarProducto?buscar='+ buscar + '&criterio='+ criterio;
-                axios.get(url).then(function (response) {
-                    var respuesta= response.data;
-                    me.arrayProducto = respuesta.productos.data;
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
             },
 
-           registrarCompra(){
-               if(this.validarCompra()){
+            agregarDetalleModal(data=[]){
+                let me=this;
 
-                   return;
-               }
+                    if(me.encuentra(data['id'])){
+                            swal({
+                                type: 'error',
+                                title: 'Error...',
+                                text: 'Ese producto ya fue agregado',
+                                })
+                        }
+                        else{
+                        me.arrayDetalle.push({
+                                idproducto: data['id'],
+                                producto: data['nombre'],
+                                cantidad: 1,
+                                precio: 1
+                            });
+                        }
 
-              let me = this;
+            },
 
-                axios.post('/compra/registrar',{
-                    'idproveedor': this.idproveedor,
-                    'num_compra' : this.num_compra,
-                    'total' : this.total,
-                    'data': this.arrayDetalle
+            listarProducto (buscar,criterio){
+                    let me=this;
+                    var url= '/producto/listarProducto?buscar='+ buscar + '&criterio='+ criterio;
+                    axios.get(url).then(function (response) {
+                        var respuesta= response.data;
+                        me.arrayProducto = respuesta.productos.data;
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },
 
-                }).then(function (response) {
-                    me.listado=1;
-                    me.listarCompra(1,'','num_compra');
-                    me.idproveedor=0;
-                    me.num_compra='';
-                    me.total=0.0;
-                    me.idproducto=0;
-                    me.producto='';
-                    me.cantidad=0;
-                    me.precio=0;
-                    me.arrayDetalle=[];
+            registrarCompra(){
+                if(this.validarCompra()){
 
-                }).catch(function (error) {
-                    console.log(error);
-                });
+                    return;
+                }
+
+                let me = this;
+
+                    axios.post('/compra/registrar',{
+                        'idproveedor': this.idproveedor,
+                        'num_compra' : this.num_compra,
+                        'total' : this.total,
+                        'data': this.arrayDetalle
+
+                    }).then(function (response) {
+                        me.listado=1;
+                        me.listarCompra(1,'','num_compra');
+                        me.idproveedor=0;
+                        me.num_compra='';
+                        me.total=0.0;
+                        me.idproducto=0;
+                        me.producto='';
+                        me.cantidad=0;
+                        me.precio=0;
+                        me.arrayDetalle=[];
+
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
 
 
-           },
+            },
 
             validarCompra(){
 
@@ -789,23 +791,23 @@
 
             },
 
-           cerrarModal(){
+            cerrarModal(){
 
                 this.modal=0;
                 this.tituloModal="";
 
-           },
+            },
 
-           abrirModal(){
+            abrirModal(){
 
-               this.arrayProducto=[];
-               this.modal = 1;
-               this.tituloModal = "Selecciona uno o varios productos";
+                this.arrayProducto=[];
+                this.modal = 1;
+                this.tituloModal = "Selecciona uno o varios productos";
 
-           },
+            },
 
-           desactivarCompra(id){
-               const swalWithBootstrapButtons = Swal.mixin({
+            desactivarCompra(id){
+                const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
                     confirmButton: 'btn btn-success',
                     cancelButton: 'btn btn-danger'
@@ -830,10 +832,10 @@
                     'id':id
 
                 }).then(function (response) {
-                     //console.log(response);
-                     me.listarCompra(1,'','nombre');
+                        //console.log(response);
+                        me.listarCompra(1,'','nombre');
 
-                     swalWithBootstrapButtons.fire(
+                        swalWithBootstrapButtons.fire(
                     'Desactivado',
                     'El registro del usuario ha sido desactivado',
                     'success'

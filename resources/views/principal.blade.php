@@ -9,6 +9,7 @@
     <meta name="keyword" content="Sistema Compras-Ventas con Laravel y Vue Js">
     <title>Proyecto</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.3.0/dist/chart.min.js">
     <!-- Icons -->
     <link href="css/plantilla.css" rel="stylesheet">
 
