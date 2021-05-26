@@ -5658,6 +5658,7 @@ __webpack_require__.r(__webpack_exports__);
       precio: 0,
       cantidad: 0,
       descuento: 0,
+      stock: 0,
       search: ''
     };
   },
@@ -5745,7 +5746,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     buscarProducto: function buscarProducto() {
       var me = this;
-      var url = '/producto/buscarProducto?filtro=' + me.codigo;
+      var url = '/producto/buscarProductoVenta?filtro=' + me.codigo;
       axios.get(url).then(function (response) {
         var respuesta = response.data;
         me.arrayProducto = respuesta.productos;
@@ -5753,6 +5754,8 @@ __webpack_require__.r(__webpack_exports__);
         if (me.arrayProducto.length > 0) {
           me.producto = me.arrayProducto[0]['nombre'];
           me.idproducto = me.arrayProducto[0]['id'];
+          me.precio = me.arrayProducto[0]['precio_venta'];
+          me.stock = me.arrayProducto[0]['stock'];
         } else {
           me.producto = 'No existe el producto';
           me.idproducto = 0;
@@ -5825,7 +5828,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     listarProducto: function listarProducto(buscar, criterio) {
       var me = this;
-      var url = '/producto/listarProducto?buscar=' + buscar + '&criterio=' + criterio;
+      var url = '/producto/listarProductoVenta?buscar=' + buscar + '&criterio=' + criterio;
       axios.get(url).then(function (response) {
         var respuesta = response.data;
         me.arrayProducto = respuesta.productos.data;

@@ -74,6 +74,31 @@ class ProductoController extends Controller
 
     }
 
+    public function listarProductoVenta(Request $request)
+    {
+        if (!$request->ajax()) return redirect('/');
+
+        $buscar = $request->buscar;
+        $criterio = $request->criterio;
+
+        if ($buscar==''){
+            $productos = Producto::join('categorias','productos.idcategoria','=','categorias.id')
+            ->select('productos.id','productos.idcategoria','productos.codigo','productos.nombre','categorias.nombre as nombre_categoria','productos.precio_venta','productos.stock','productos.condicion')
+            ->where('productos.stock','>','0')
+            ->orderBy('productos.id', 'desc')->paginate(10);
+        }
+        else{
+            $productos = Producto::join('categorias','productos.idcategoria','=','categorias.id')
+            ->select('productos.id','productos.idcategoria','productos.codigo','productos.nombre','categorias.nombre as nombre_categoria','productos.precio_venta','productos.stock','productos.condicion')
+            ->where('productos.'.$criterio, 'like', '%'. $buscar . '%')
+            ->where('productos.stock','>','0')
+            ->orderBy('productos.id', 'desc')->paginate(10);
+        }
+
+
+        return ['productos' => $productos];
+    }
+
     public function listarPdf(){
 
         $productos = Producto::join('categorias','productos.idcategoria','=','categorias.id')
@@ -93,6 +118,19 @@ class ProductoController extends Controller
         $filtro = $request->filtro;
         $productos = Producto::where('codigo','=', $filtro)
         ->select('id','nombre')->orderBy('nombre', 'asc')->take(1)->get();
+
+        return ['productos' => $productos];
+    }
+
+    public function buscarProductoVenta(Request $request){
+        if (!$request->ajax()) return redirect('/');
+
+        $filtro = $request->filtro;
+        $productos = Producto::where('codigo','=', $filtro)
+        ->select('id','nombre','stock','precio_venta')
+        ->where('stock','>','0')
+        ->orderBy('nombre', 'asc')
+        ->take(1)->get();
 
         return ['productos' => $productos];
     }

@@ -42,8 +42,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('/producto/activar', 'ProductoController@activar');
         Route::get('/producto/buscarProducto', 'ProductoController@buscarProducto');
         Route::get('/producto/listarProducto', 'ProductoController@listarProducto');
-        //Route::get('/producto/buscarProductoVenta', 'ProductoController@buscarProductoVenta');
-      // Route::get('/producto/listarProductoVenta', 'ProductoController@listarProductoVenta');
+        Route::get('/producto/buscarProductoVenta', 'ProductoController@buscarProductoVenta');
+        Route::get('/producto/listarProductoVenta', 'ProductoController@listarProductoVenta');
         Route::get('/producto/listarPdf', 'ProductoController@listarPdf')->name('productos_pdf');
 
         Route::get('/proveedor', 'ProveedorController@index');
@@ -81,6 +81,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('/producto/activar', 'ProductoController@activar');
         Route::get('/producto/buscarProducto', 'ProductoController@buscarProducto');
         Route::get('/producto/listarProducto', 'ProductoController@listarProducto');
+        Route::get('/producto/buscarProductoVenta', 'ProductoController@buscarProductoVenta');
+        Route::get('/producto/listarProductoVenta', 'ProductoController@listarProductoVenta');
         Route::get('/producto/listarPdf', 'ProductoController@listarPdf')->name('productos_pdf');
 
         Route::get('/cliente', 'ClienteController@index');
@@ -112,8 +114,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('/producto/activar', 'ProductoController@activar');
         Route::get('/producto/buscarProducto', 'ProductoController@buscarProducto');
         Route::get('/producto/listarProducto', 'ProductoController@listarProducto');
+        Route::get('/producto/buscarProductoVenta', 'ProductoController@buscarProductoVenta');
+        Route::get('/producto/listarProductoVenta', 'ProductoController@listarProductoVenta');
         Route::get('/producto/listarPdf', 'ProductoController@listarPdf')->name('productos_pdf');
-
 
         Route::get('/proveedor', 'ProveedorController@index');
         Route::post('/proveedor/registrar', 'ProveedorController@store');
