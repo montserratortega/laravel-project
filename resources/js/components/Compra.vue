@@ -149,7 +149,7 @@
                                         label="nombre"
                                         :options="arrayProveedor"
                                         placeholder="Buscar Proveedores"
-                                        :onChange="getDatosProveedor"
+                                        @input="getDatosProveedor"
                                     > </v-select>
                                 </div>
                             </div>
@@ -597,6 +597,7 @@
             },
 
             getDatosProveedor(val1){
+                console.log("Set data ", val1)
                 let me = this;
                 me.loading = true;
                 me.idproveedor = val1.id;
@@ -661,11 +662,7 @@
                     if(me.encuentra(me.idproducto)){
                         console.log('ITS DA SAME BEACH')
                         alert('Este producto ya ha sido agregado.')
-                        // Swal.mixin({
-                        //     type: 'error',
-                        //     title: 'Error...',
-                        //     text: 'Ese producto ya fue agregado',
-                        // })
+
                     }
                     else{
                        me.arrayDetalle.push({
@@ -718,46 +715,47 @@
             },
 
             registrarCompra(){
-                if(this.validarCompra()){
+                console.log('Test')
+               if(this.validarCompra()){
 
-                    return;
-                }
+                   return;
+               }
 
-                let me = this;
+              let me = this;
 
-                    axios.post('/compra/registrar',{
-                        'idproveedor': this.idproveedor,
-                        'num_compra' : this.num_compra,
-                        'total' : this.total,
-                        'data': this.arrayDetalle
+                axios.post('/compra/registrar',{
+                    'idproveedor': this.idproveedor,
+                    'num_compra' : this.num_compra,
+                    'total' : this.total,
+                    'data': this.arrayDetalle
 
-                    }).then(function (response) {
-                        me.listado=1;
-                        me.listarCompra(1,'','num_compra');
-                        me.idproveedor=0;
-                        me.num_compra='';
-                        me.total=0.0;
-                        me.idproducto=0;
-                        me.producto='';
-                        me.cantidad=0;
-                        me.precio=0;
-                        me.arrayDetalle=[];
+                }).then(function (response) {
+                    me.listado=1;
+                    me.listarCompra(1,'','num_compra');
+                    me.idproveedor=0;
+                    me.num_compra='';
+                    me.total=0.0;
+                    me.idproducto=0;
+                    me.producto='';
+                    me.cantidad=0;
+                    me.precio=0;
+                    me.arrayDetalle=[];
 
-                    }).catch(function (error) {
-                        console.log(error);
-                    });
+                }).catch(function (error) {
+                    console.log(error);
+                });
 
 
             },
 
             validarCompra(){
 
-                this.errorCompra=0;
-                this.errorMostrarMsjCompra =[];
+               this.errorCompra=0;
+               this.errorMostrarMsjCompra =[];
 
-                if (this.idproveedor==0) this.errorMostrarMsjCompra.push("(*)Debes seleccionar un proveedor.");
-                if (!this.num_compra) this.errorMostrarMsjCompra.push("(*)Debes de ingresar numero de compra");
-                if (this.arrayDetalle.length<=0) this.errorMostrarMsjCompra.push("(*)Ingrese.");
+                if (this.idproveedor==0) this.errorMostrarMsjCompra.push("Seleccione un Proveedor");
+                if (!this.num_compra) this.errorMostrarMsjCompra.push("Ingrese el número de compra");
+                if (this.arrayDetalle.length<=0) this.errorMostrarMsjCompra.push("Ingrese detalles");
 
                 if (this.errorMostrarMsjCompra.length) this.errorCompra = 1;
 

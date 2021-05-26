@@ -3183,6 +3183,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     getDatosProveedor: function getDatosProveedor(val1) {
+      console.log("Set data ", val1);
       var me = this;
       me.loading = true;
       me.idproveedor = val1.id;
@@ -3232,11 +3233,7 @@ __webpack_require__.r(__webpack_exports__);
       if (me.idproducto == 0 || me.cantidad == 0 || me.precio == 0) {} else {
         if (me.encuentra(me.idproducto)) {
           console.log('ITS DA SAME BEACH');
-          alert('Este producto ya ha sido agregado.'); // Swal.mixin({
-          //     type: 'error',
-          //     title: 'Error...',
-          //     text: 'Ese producto ya fue agregado',
-          // })
+          alert('Este producto ya ha sido agregado.');
         } else {
           me.arrayDetalle.push({
             idproducto: me.idproducto,
@@ -3282,6 +3279,8 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     registrarCompra: function registrarCompra() {
+      console.log('Test');
+
       if (this.validarCompra()) {
         return;
       }
@@ -3310,9 +3309,9 @@ __webpack_require__.r(__webpack_exports__);
     validarCompra: function validarCompra() {
       this.errorCompra = 0;
       this.errorMostrarMsjCompra = [];
-      if (this.idproveedor == 0) this.errorMostrarMsjCompra.push("(*)Debes seleccionar un proveedor.");
-      if (!this.num_compra) this.errorMostrarMsjCompra.push("(*)Debes de ingresar numero de compra");
-      if (this.arrayDetalle.length <= 0) this.errorMostrarMsjCompra.push("(*)Ingrese.");
+      if (this.idproveedor == 0) this.errorMostrarMsjCompra.push("Seleccione un Proveedor");
+      if (!this.num_compra) this.errorMostrarMsjCompra.push("Ingrese el número de compra");
+      if (this.arrayDetalle.length <= 0) this.errorMostrarMsjCompra.push("Ingrese detalles");
       if (this.errorMostrarMsjCompra.length) this.errorCompra = 1;
       return this.errorCompra;
     },
@@ -30070,10 +30069,12 @@ var render = function() {
                             attrs: {
                               label: "nombre",
                               options: _vm.arrayProveedor,
-                              placeholder: "Buscar Proveedores",
-                              onChange: _vm.getDatosProveedor
+                              placeholder: "Buscar Proveedores"
                             },
-                            on: { search: _vm.selectProveedor }
+                            on: {
+                              search: _vm.selectProveedor,
+                              input: _vm.getDatosProveedor
+                            }
                           })
                         ],
                         1
