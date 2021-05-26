@@ -872,7 +872,7 @@
 
             },
 
-            desactivarCompra(id){
+            desactivarVenta(id){
                 const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
                     confirmButton: 'btn btn-success',
@@ -882,7 +882,7 @@
                 })
 
                 swalWithBootstrapButtons.fire({
-                title: '¿Estas seguro de desactivar la compra?',
+                title: '¿Estas seguro de anular la venta?',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: '<i class="fa fa-check fa-2x"></i> Aceptar',
@@ -893,17 +893,17 @@
 
                     let me=this;
 
-                axios.put('/compra/desactivar',{
+                axios.put('/venta/desactivar',{
 
                     'id':id
 
                 }).then(function (response) {
                         //console.log(response);
-                        me.listarCompra(1,'','nombre');
+                        me.listarVenta(1,'','nombre');
 
                         swalWithBootstrapButtons.fire(
-                    'Desactivado',
-                    'El registro del usuario ha sido desactivado',
+                    'Anulado',
+                    'La venta ha sido anulada',
                     'success'
                     )
 

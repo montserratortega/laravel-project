@@ -5946,7 +5946,7 @@ __webpack_require__.r(__webpack_exports__);
       this.modal = 1;
       this.tituloModal = "Selecciona uno o varios productos";
     },
-    desactivarCompra: function desactivarCompra(id) {
+    desactivarVenta: function desactivarVenta(id) {
       var _this = this;
 
       var swalWithBootstrapButtons = Swal.mixin({
@@ -5957,7 +5957,7 @@ __webpack_require__.r(__webpack_exports__);
         buttonsStyling: false
       });
       swalWithBootstrapButtons.fire({
-        title: '¿Estas seguro de desactivar la compra?',
+        title: '¿Estas seguro de anular la venta?',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: '<i class="fa fa-check fa-2x"></i> Aceptar',
@@ -5966,12 +5966,12 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (result) {
         if (result.isConfirmed) {
           var me = _this;
-          axios.put('/compra/desactivar', {
+          axios.put('/venta/desactivar', {
             'id': id
           }).then(function (response) {
             //console.log(response);
-            me.listarCompra(1, '', 'nombre');
-            swalWithBootstrapButtons.fire('Desactivado', 'El registro del usuario ha sido desactivado', 'success');
+            me.listarVenta(1, '', 'nombre');
+            swalWithBootstrapButtons.fire('Anulado', 'La venta ha sido anulada', 'success');
           })["catch"](function (error) {
             console.log(error);
           });
