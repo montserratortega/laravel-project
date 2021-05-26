@@ -60,6 +60,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/compra', 'CompraController@index');
         Route::post('/compra/registrar', 'CompraController@store');
         Route::put('/compra/desactivar', 'CompraController@desactivar');
+        Route::get('/compra/obtenerCabecera', 'CompraController@obtenerCabecera');
+        Route::get('/compra/obtenerDetalles', 'CompraController@obtenerDetalles');
 
     });
 
@@ -84,6 +86,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/cliente', 'ClienteController@index');
         Route::post('/cliente/registrar', 'ClienteController@store');
         Route::put('/cliente/actualizar', 'ClienteController@update');
+        Route::get('/cliente/selectCliente', 'clienteController@selectCliente');
 
         Route::get('/venta', 'VentaController@index');
         Route::post('/venta/registrar', 'VentaController@store');
@@ -120,10 +123,13 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/compra', 'CompraController@index');
         Route::post('/compra/registrar', 'CompraController@store');
         Route::put('/compra/desactivar', 'CompraController@desactivar');
+        Route::get('/compra/obtenerCabecera', 'CompraController@obtenerCabecera');
+        Route::get('/compra/obtenerDetalles', 'CompraController@obtenerDetalles');
 
         Route::get('/cliente', 'ClienteController@index');
         Route::post('/cliente/registrar', 'ClienteController@store');
         Route::put('/cliente/actualizar', 'ClienteController@update');
+        Route::get('/cliente/selectCliente', 'clienteController@selectCliente');
 
         Route::get('/venta', 'VentaController@index');
         Route::post('/venta/registrar', 'VentaController@store');

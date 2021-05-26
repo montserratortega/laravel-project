@@ -145,14 +145,12 @@
                                 <div class="form-group">
                                     <label class="text-uppercase"><strong>Cliente(*)</strong></label>
                                     <v-select
-                                        :on-search="selectCliente"
+                                        @search="selectCliente"
                                         label="nombre"
                                         :options="arrayCliente"
-                                        placeholder="Buscar Clientes..."
-                                        :onChange="getDatosCliente"
-                                    >
-
-                                    </v-select>
+                                        placeholder="Buscar Clientes"
+                                        @input="getDatosCliente"
+                                    > </v-select>
                                 </div>
                             </div>
 
@@ -206,6 +204,7 @@
                                     <input type="number" value="0" class="form-control" v-model="descuento">
                                 </div>
                             </div>
+
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <button @click="agregarDetalle()" class="btn btn-primary form-control btnagregar"><i class="fa fa-plus fa-2x"></i> Agregar detalle</button>
@@ -254,13 +253,13 @@
                                             </td>
                                         </tr>
                                         <tr style="background-color: grey;">
-                                            <td colspan="5" align="right"><strong>Total:</strong></td>
-                                            <td><strong> MXN {{total=calcularTotal}}</strong></td>
+                                            <td colspan="4" align="right"><strong>Total:</strong></td>
+                                            <td><strong> $ {{total=calcularTotal}}</strong></td>
                                         </tr>
                                     </tbody>
                                     <tbody v-else>
                                         <tr>
-                                            <td colspan="6">
+                                            <td colspan="5">
                                                 No se han agregado productos
                                             </td>
                                         </tr>
@@ -327,17 +326,10 @@
                                             {{detalle.precio*detalle.cantidad}}
                                         </td>
                                     </tr>
-                                    <tr style="background-color: grey;">
-                                        <td colspan="3" align="right"><strong>Sub-Total:</strong></td>
-                                        <td><strong>USD$ {{subTotal=(total-subTotalImpuesto).toFixed(2)}}</strong></td>
-                                    </tr>
-                                    <tr style="background-color: grey;">
-                                        <td colspan="3" align="right"><strong>Impuesto:</strong></td>
-                                        <td><strong>USD$ {{subTotalImpuesto=((total*impuesto)).toFixed(2)}}</strong></td>
-                                    </tr>
+
                                     <tr style="background-color: grey;">
                                         <td colspan="3" align="right"><strong>Total:</strong></td>
-                                        <td><strong>USD$ {{total}}</strong></td>
+                                        <td><strong>$ {{total}}</strong></td>
                                     </tr>
                                 </tbody>
                                 <tbody v-else>
@@ -466,6 +458,7 @@
 <script>
 
     import vSelect from 'vue-select';
+    import 'vue-select/dist/vue-select.css';
 
     export default {
         data(){
@@ -477,7 +470,6 @@
                 cliente:'',
                 num_venta : '',
                 total:0.0,
-                //subTotal: 0.0,
                 arrayVenta:[],
                 arrayCliente:[],
                 arrayDetalle:[],
@@ -508,7 +500,8 @@
                 producto: '',
                 precio: 0,
                 cantidad: 0,
-                descuento:0
+                descuento:0,
+                search: '',
             }
 
         },
@@ -554,60 +547,63 @@
                 return pagesArray;
 
 
-            }
+            },
 
-        },
+            calcularTotal: function(){
+                var resultado=0.0;
+                for(var i=0;i<this.arrayDetalle.length;i++){
+                    resultado=resultado+(this.arrayDetalle[i].precio*this.arrayDetalle[i].cantidad)
+                }
+                return resultado;
 
-        calcularTotal: function(){
-            var resultado=0.0;
-            for(var i=0;i<this.arrayDetalle.length;i++){
-                resultado=resultado+(this.arrayDetalle[i].precio*this.arrayDetalle[i].cantidad)
-            }
-            return resultado;
+            },
 
         },
 
         methods:{
 
-           listarVenta(page,buscar,criterio){
+            listarVenta(page,buscar,criterio){
 
-               let me=this;
-
-               var url= '/venta?page=' + page + '&buscar='+ buscar + '&criterio='+criterio;
-
-               axios.get(url).then(function (response) {
-                    // handle success
-                    //console.log(response);
-                    var respuesta = response.data;
-                    me.arrayVenta=respuesta.ventas.data;
-                    me.pagination= respuesta.pagination;
-                })
-                .catch(function (error) {
-                    // handle error
-                    console.log(error);
-                });
-           },
-
-           selectProveedor(search,loading){
                 let me=this;
-                loading(true)
 
-                var url= '/proveedor/selectProveedor?filtro='+search;
+                var url= '/venta?page=' + page + '&buscar='+ buscar + '&criterio='+criterio;
+
                 axios.get(url).then(function (response) {
-                    let respuesta = response.data;
-                    q: search
-                    me.arrayProveedor=respuesta.proveedores;
-                    loading(false)
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
+                        // handle success
+                        //console.log(response);
+                        var respuesta = response.data;
+                        me.arrayVenta=respuesta.ventas.data;
+                        me.pagination= respuesta.pagination;
+                    })
+                    .catch(function (error) {
+                        // handle error
+                        console.log(error);
+                    });
             },
 
-            getDatosProveedor(val1){
+            selectCliente(search,loading){
+                console.log('Hi')
+                    let me=this;
+                    loading(true)
+
+                    var url= '/cliente/selectCliente?filtro='+search;
+                    axios.get(url).then(function (response) {
+                        console.log(response);
+                        let respuesta = response.data;
+                        q: search
+                        me.arrayCliente=respuesta.clientes;
+                        loading(false)
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },
+
+            getDatosCliente(val1){
+                console.log("Set data ", val1)
                 let me = this;
                 me.loading = true;
-                me.idproveedor = val1.id;
+                me.idcliente = val1.id;
             },
 
             buscarProducto(){
@@ -632,26 +628,26 @@
                 });
             },
 
-           cambiarPagina(page,buscar,criterio){
+            cambiarPagina(page,buscar,criterio){
 
-              let me = this;
+                let me = this;
 
-              //Actualiza  la pagina actual
+                //Actualiza  la pagina actual
 
-               me.pagination.current_page=page;
+                me.pagination.current_page=page;
 
-               me.listarVenta(page,buscar,criterio);
+                me.listarVenta(page,buscar,criterio);
 
-           },
+            },
 
-           encuentra(id){
-                var sw=0;
-                for(var i=0;i<this.arrayDetalle.length;i++){
-                    if(this.arrayDetalle[i].idproducto==id){
-                        sw=true;
+            encuentra(id){
+                    var sw=0;
+                    for(var i=0;i<this.arrayDetalle.length;i++){
+                        if(this.arrayDetalle[i].idproducto==id){
+                            sw=true;
+                        }
                     }
-                }
-                return sw;
+                    return sw;
             },
 
             eliminarDetalle(index){
@@ -660,18 +656,16 @@
 
             },
 
-           agregarDetalle(){
-                let me=this;
+            agregarDetalle(){
+               let me=this;
                 if(me.idproducto==0 || me.cantidad==0 || me.precio==0){
                 }
 
                 else{
                     if(me.encuentra(me.idproducto)){
-                        swal({
-                            type: 'error',
-                            title: 'Error...',
-                            text: 'Ese producto ya fue agregado',
-                            })
+                        console.log('ITS DA SAME BEACH')
+                        alert('Este producto ya ha sido agregado.')
+
                     }
                     else{
                        me.arrayDetalle.push({
@@ -688,44 +682,43 @@
                     }
 
                 }
-
-
-           },
-
-           agregarDetalleModal(data=[]){
-               let me=this;
-
-                if(me.encuentra(data['id'])){
-                        swal({
-                            type: 'error',
-                            title: 'Error...',
-                            text: 'Ese producto ya fue agregado',
-                            })
-                    }
-                    else{
-                       me.arrayDetalle.push({
-                            idproducto: data['id'],
-                            producto: data['nombre'],
-                            cantidad: 1,
-                            precio: 1
-                        });
-                    }
-
-           },
-
-           listarProducto (buscar,criterio){
-                let me=this;
-                var url= '/producto/listarProducto?buscar='+ buscar + '&criterio='+ criterio;
-                axios.get(url).then(function (response) {
-                    var respuesta= response.data;
-                    me.arrayProducto = respuesta.productos.data;
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
             },
 
-           registrarCompra(){
+            agregarDetalleModal(data=[]){
+                let me=this;
+
+                    if(me.encuentra(data['id'])){
+                            swal({
+                                type: 'error',
+                                title: 'Error...',
+                                text: 'Ese producto ya fue agregado',
+                                })
+                        }
+                        else{
+                        me.arrayDetalle.push({
+                                idproducto: data['id'],
+                                producto: data['nombre'],
+                                cantidad: 1,
+                                precio: 1
+                            });
+                        }
+
+            },
+
+            listarProducto (buscar,criterio){
+                    let me=this;
+                    var url= '/producto/listarProducto?buscar='+ buscar + '&criterio='+ criterio;
+                    axios.get(url).then(function (response) {
+                        var respuesta= response.data;
+                        me.arrayProducto = respuesta.productos.data;
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },
+
+            registrarCompra(){
+                console.log('Test')
                if(this.validarCompra()){
 
                    return;
@@ -756,16 +749,16 @@
                 });
 
 
-           },
+            },
 
             validarCompra(){
 
-                this.errorCompra=0;
-                this.errorMostrarMsjCompra =[];
+               this.errorCompra=0;
+               this.errorMostrarMsjCompra =[];
 
-                if (this.idproveedor==0) this.errorMostrarMsjCompra.push("(*)Debes seleccionar un proveedor.");
-                if (!this.num_compra) this.errorMostrarMsjCompra.push("(*)Debes de ingresar numero de compra");
-                if (this.arrayDetalle.length<=0) this.errorMostrarMsjCompra.push("(*)Ingrese.");
+                if (this.idproveedor==0) this.errorMostrarMsjCompra.push("Seleccione un Proveedor");
+                if (!this.num_compra) this.errorMostrarMsjCompra.push("Ingrese el número de compra");
+                if (this.arrayDetalle.length<=0) this.errorMostrarMsjCompra.push("Ingrese detalles");
 
                 if (this.errorMostrarMsjCompra.length) this.errorCompra = 1;
 
@@ -792,30 +785,58 @@
                 this.listado=1;
             },
 
-            verCompra(){
+            verCompra(id){
 
                 let me=this;
                 me.listado=2;
 
+                 //Obtener los datos de la compra
+                var arrayCompraT=[];
+                var url= '/compra/obtenerCabecera?id=' + id;
+
+                axios.get(url).then(function (response) {
+                    var respuesta= response.data;
+                    arrayCompraT = respuesta.compra;
+
+                    me.proveedor = arrayCompraT[0]['nombre'];
+                    me.num_compra=arrayCompraT[0]['num_compra'];
+                    me.total=arrayCompraT[0]['total'];
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+
+                //Obtener los datos de los detalles
+                var urld= '/compra/obtenerDetalles?id=' + id;
+
+                axios.get(urld).then(function (response) {
+                    console.log(response);
+                    var respuesta= response.data;
+                    me.arrayDetalle = respuesta.detalles;
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+
             },
 
-           cerrarModal(){
+            cerrarModal(){
 
                 this.modal=0;
                 this.tituloModal="";
 
-           },
+            },
 
-           abrirModal(){
+            abrirModal(){
 
-               this.arrayProducto=[];
-               this.modal = 1;
-               this.tituloModal = "Selecciona uno o varios productos";
+                this.arrayProducto=[];
+                this.modal = 1;
+                this.tituloModal = "Selecciona uno o varios productos";
 
-           },
+            },
 
-           desactivarCompra(id){
-               const swalWithBootstrapButtons = Swal.mixin({
+            desactivarCompra(id){
+                const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
                     confirmButton: 'btn btn-success',
                     cancelButton: 'btn btn-danger'
@@ -840,10 +861,10 @@
                     'id':id
 
                 }).then(function (response) {
-                     //console.log(response);
-                     me.listarCompra(1,'','nombre');
+                        //console.log(response);
+                        me.listarCompra(1,'','nombre');
 
-                     swalWithBootstrapButtons.fire(
+                        swalWithBootstrapButtons.fire(
                     'Desactivado',
                     'El registro del usuario ha sido desactivado',
                     'success'

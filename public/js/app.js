@@ -3056,13 +3056,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -3330,9 +3323,30 @@ __webpack_require__.r(__webpack_exports__);
     ocultarDetalle: function ocultarDetalle() {
       this.listado = 1;
     },
-    verCompra: function verCompra() {
+    verCompra: function verCompra(id) {
       var me = this;
-      me.listado = 2;
+      me.listado = 2; //Obtener los datos de la compra
+
+      var arrayCompraT = [];
+      var url = '/compra/obtenerCabecera?id=' + id;
+      axios.get(url).then(function (response) {
+        var respuesta = response.data;
+        arrayCompraT = respuesta.compra;
+        me.proveedor = arrayCompraT[0]['nombre'];
+        me.num_compra = arrayCompraT[0]['num_compra'];
+        me.total = arrayCompraT[0]['total'];
+      })["catch"](function (error) {
+        console.log(error);
+      }); //Obtener los datos de los detalles
+
+      var urld = '/compra/obtenerDetalles?id=' + id;
+      axios.get(urld).then(function (response) {
+        console.log(response);
+        var respuesta = response.data;
+        me.arrayDetalle = respuesta.detalles;
+      })["catch"](function (error) {
+        console.log(error);
+      });
     },
     cerrarModal: function cerrarModal() {
       this.modal = 0;
@@ -5146,14 +5160,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var vue_select__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-select */ "./node_modules/vue-select/dist/vue-select.js");
 /* harmony import */ var vue_select__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue_select__WEBPACK_IMPORTED_MODULE_0__);
-//
-//
-//
-//
-//
-//
-//
-//
+/* harmony import */ var vue_select_dist_vue_select_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-select/dist/vue-select.css */ "./node_modules/vue-select/dist/vue-select.css");
+/* harmony import */ var vue_select_dist_vue_select_css__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue_select_dist_vue_select_css__WEBPACK_IMPORTED_MODULE_1__);
 //
 //
 //
@@ -5612,6 +5620,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -5620,7 +5629,6 @@ __webpack_require__.r(__webpack_exports__);
       cliente: '',
       num_venta: '',
       total: 0.0,
-      //subTotal: 0.0,
       arrayVenta: [],
       arrayCliente: [],
       arrayDetalle: [],
@@ -5649,7 +5657,8 @@ __webpack_require__.r(__webpack_exports__);
       producto: '',
       precio: 0,
       cantidad: 0,
-      descuento: 0
+      descuento: 0,
+      search: ''
     };
   },
   components: {
@@ -5685,16 +5694,16 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       return pagesArray;
-    }
-  },
-  calcularTotal: function calcularTotal() {
-    var resultado = 0.0;
+    },
+    calcularTotal: function calcularTotal() {
+      var resultado = 0.0;
 
-    for (var i = 0; i < this.arrayDetalle.length; i++) {
-      resultado = resultado + this.arrayDetalle[i].precio * this.arrayDetalle[i].cantidad;
-    }
+      for (var i = 0; i < this.arrayDetalle.length; i++) {
+        resultado = resultado + this.arrayDetalle[i].precio * this.arrayDetalle[i].cantidad;
+      }
 
-    return resultado;
+      return resultado;
+    }
   },
   methods: {
     listarVenta: function listarVenta(page, buscar, criterio) {
@@ -5711,25 +5720,28 @@ __webpack_require__.r(__webpack_exports__);
         console.log(error);
       });
     },
-    selectProveedor: function selectProveedor(search, loading) {
+    selectCliente: function selectCliente(search, loading) {
+      console.log('Hi');
       var me = this;
       loading(true);
-      var url = '/proveedor/selectProveedor?filtro=' + search;
+      var url = '/cliente/selectCliente?filtro=' + search;
       axios.get(url).then(function (response) {
+        console.log(response);
         var respuesta = response.data;
 
         q: search;
 
-        me.arrayProveedor = respuesta.proveedores;
+        me.arrayCliente = respuesta.clientes;
         loading(false);
       })["catch"](function (error) {
         console.log(error);
       });
     },
-    getDatosProveedor: function getDatosProveedor(val1) {
+    getDatosCliente: function getDatosCliente(val1) {
+      console.log("Set data ", val1);
       var me = this;
       me.loading = true;
-      me.idproveedor = val1.id;
+      me.idcliente = val1.id;
     },
     buscarProducto: function buscarProducto() {
       var me = this;
@@ -5775,11 +5787,8 @@ __webpack_require__.r(__webpack_exports__);
 
       if (me.idproducto == 0 || me.cantidad == 0 || me.precio == 0) {} else {
         if (me.encuentra(me.idproducto)) {
-          swal({
-            type: 'error',
-            title: 'Error...',
-            text: 'Ese producto ya fue agregado'
-          });
+          console.log('ITS DA SAME BEACH');
+          alert('Este producto ya ha sido agregado.');
         } else {
           me.arrayDetalle.push({
             idproducto: me.idproducto,
@@ -5825,6 +5834,8 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     registrarCompra: function registrarCompra() {
+      console.log('Test');
+
       if (this.validarCompra()) {
         return;
       }
@@ -5853,9 +5864,9 @@ __webpack_require__.r(__webpack_exports__);
     validarCompra: function validarCompra() {
       this.errorCompra = 0;
       this.errorMostrarMsjCompra = [];
-      if (this.idproveedor == 0) this.errorMostrarMsjCompra.push("(*)Debes seleccionar un proveedor.");
-      if (!this.num_compra) this.errorMostrarMsjCompra.push("(*)Debes de ingresar numero de compra");
-      if (this.arrayDetalle.length <= 0) this.errorMostrarMsjCompra.push("(*)Ingrese.");
+      if (this.idproveedor == 0) this.errorMostrarMsjCompra.push("Seleccione un Proveedor");
+      if (!this.num_compra) this.errorMostrarMsjCompra.push("Ingrese el número de compra");
+      if (this.arrayDetalle.length <= 0) this.errorMostrarMsjCompra.push("Ingrese detalles");
       if (this.errorMostrarMsjCompra.length) this.errorCompra = 1;
       return this.errorCompra;
     },
@@ -5874,9 +5885,30 @@ __webpack_require__.r(__webpack_exports__);
     ocultarDetalle: function ocultarDetalle() {
       this.listado = 1;
     },
-    verCompra: function verCompra() {
+    verCompra: function verCompra(id) {
       var me = this;
-      me.listado = 2;
+      me.listado = 2; //Obtener los datos de la compra
+
+      var arrayCompraT = [];
+      var url = '/compra/obtenerCabecera?id=' + id;
+      axios.get(url).then(function (response) {
+        var respuesta = response.data;
+        arrayCompraT = respuesta.compra;
+        me.proveedor = arrayCompraT[0]['nombre'];
+        me.num_compra = arrayCompraT[0]['num_compra'];
+        me.total = arrayCompraT[0]['total'];
+      })["catch"](function (error) {
+        console.log(error);
+      }); //Obtener los datos de los detalles
+
+      var urld = '/compra/obtenerDetalles?id=' + id;
+      axios.get(urld).then(function (response) {
+        console.log(response);
+        var respuesta = response.data;
+        me.arrayDetalle = respuesta.detalles;
+      })["catch"](function (error) {
+        console.log(error);
+      });
     },
     cerrarModal: function cerrarModal() {
       this.modal = 0;
@@ -30613,58 +30645,7 @@ var render = function() {
                                       _vm._v(" "),
                                       _c("td", [
                                         _c("strong", [
-                                          _vm._v(
-                                            "USD$ " +
-                                              _vm._s(
-                                                (_vm.subTotal = (
-                                                  _vm.total -
-                                                  _vm.subTotalImpuesto
-                                                ).toFixed(2))
-                                              )
-                                          )
-                                        ])
-                                      ])
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "tr",
-                                    {
-                                      staticStyle: {
-                                        "background-color": "grey"
-                                      }
-                                    },
-                                    [
-                                      _vm._m(13),
-                                      _vm._v(" "),
-                                      _c("td", [
-                                        _c("strong", [
-                                          _vm._v(
-                                            "USD$ " +
-                                              _vm._s(
-                                                (_vm.subTotalImpuesto = (
-                                                  _vm.total * _vm.impuesto
-                                                ).toFixed(2))
-                                              )
-                                          )
-                                        ])
-                                      ])
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "tr",
-                                    {
-                                      staticStyle: {
-                                        "background-color": "grey"
-                                      }
-                                    },
-                                    [
-                                      _vm._m(14),
-                                      _vm._v(" "),
-                                      _c("td", [
-                                        _c("strong", [
-                                          _vm._v("USD$ " + _vm._s(_vm.total))
+                                          _vm._v("$ " + _vm._s(_vm.total))
                                         ])
                                       ])
                                     ]
@@ -30672,7 +30653,7 @@ var render = function() {
                                 ],
                                 2
                               )
-                            : _c("tbody", [_vm._m(15)])
+                            : _c("tbody", [_vm._m(13)])
                         ]
                       )
                     ])
@@ -30866,7 +30847,7 @@ var render = function() {
                       staticClass: "table table-bordered table-striped table-sm"
                     },
                     [
-                      _vm._m(16),
+                      _vm._m(14),
                       _vm._v(" "),
                       _c(
                         "tbody",
@@ -31164,22 +31145,6 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Total")])
       ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("td", { attrs: { colspan: "3", align: "right" } }, [
-      _c("strong", [_vm._v("Sub-Total:")])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("td", { attrs: { colspan: "3", align: "right" } }, [
-      _c("strong", [_vm._v("Impuesto:")])
     ])
   },
   function() {
@@ -34453,11 +34418,13 @@ var render = function() {
                           _vm._v(" "),
                           _c("v-select", {
                             attrs: {
-                              "on-search": _vm.selectCliente,
                               label: "nombre",
                               options: _vm.arrayCliente,
-                              placeholder: "Buscar Clientes...",
-                              onChange: _vm.getDatosCliente
+                              placeholder: "Buscar Clientes"
+                            },
+                            on: {
+                              search: _vm.selectCliente,
+                              input: _vm.getDatosCliente
                             }
                           })
                         ],
@@ -34909,7 +34876,7 @@ var render = function() {
                                       _c("td", [
                                         _c("strong", [
                                           _vm._v(
-                                            " MXN " +
+                                            " $ " +
                                               _vm._s(
                                                 (_vm.total = _vm.calcularTotal)
                                               )
@@ -35055,58 +35022,7 @@ var render = function() {
                                       _vm._v(" "),
                                       _c("td", [
                                         _c("strong", [
-                                          _vm._v(
-                                            "USD$ " +
-                                              _vm._s(
-                                                (_vm.subTotal = (
-                                                  _vm.total -
-                                                  _vm.subTotalImpuesto
-                                                ).toFixed(2))
-                                              )
-                                          )
-                                        ])
-                                      ])
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "tr",
-                                    {
-                                      staticStyle: {
-                                        "background-color": "grey"
-                                      }
-                                    },
-                                    [
-                                      _vm._m(13),
-                                      _vm._v(" "),
-                                      _c("td", [
-                                        _c("strong", [
-                                          _vm._v(
-                                            "USD$ " +
-                                              _vm._s(
-                                                (_vm.subTotalImpuesto = (
-                                                  _vm.total * _vm.impuesto
-                                                ).toFixed(2))
-                                              )
-                                          )
-                                        ])
-                                      ])
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "tr",
-                                    {
-                                      staticStyle: {
-                                        "background-color": "grey"
-                                      }
-                                    },
-                                    [
-                                      _vm._m(14),
-                                      _vm._v(" "),
-                                      _c("td", [
-                                        _c("strong", [
-                                          _vm._v("USD$ " + _vm._s(_vm.total))
+                                          _vm._v("$ " + _vm._s(_vm.total))
                                         ])
                                       ])
                                     ]
@@ -35114,7 +35030,7 @@ var render = function() {
                                 ],
                                 2
                               )
-                            : _c("tbody", [_vm._m(15)])
+                            : _c("tbody", [_vm._m(13)])
                         ]
                       )
                     ])
@@ -35308,7 +35224,7 @@ var render = function() {
                       staticClass: "table table-bordered table-striped table-sm"
                     },
                     [
-                      _vm._m(16),
+                      _vm._m(14),
                       _vm._v(" "),
                       _c(
                         "tbody",
@@ -35562,7 +35478,7 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("td", { attrs: { colspan: "5", align: "right" } }, [
+    return _c("td", { attrs: { colspan: "4", align: "right" } }, [
       _c("strong", [_vm._v("Total:")])
     ])
   },
@@ -35571,7 +35487,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("tr", [
-      _c("td", { attrs: { colspan: "6" } }, [
+      _c("td", { attrs: { colspan: "5" } }, [
         _vm._v(
           "\n                                             No se han agregado productos\n                                         "
         )
@@ -35608,22 +35524,6 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Total")])
       ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("td", { attrs: { colspan: "3", align: "right" } }, [
-      _c("strong", [_vm._v("Sub-Total:")])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("td", { attrs: { colspan: "3", align: "right" } }, [
-      _c("strong", [_vm._v("Impuesto:")])
     ])
   },
   function() {

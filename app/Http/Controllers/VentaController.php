@@ -14,7 +14,7 @@ class VentaController extends Controller
     //
     public function index(Request $request)
     {
-       // if (!$request->ajax()) return redirect('/');
+        if (!$request->ajax()) return redirect('/');
 
         $buscar = $request->buscar;
         $criterio = $request->criterio;
@@ -84,7 +84,7 @@ class VentaController extends Controller
         try{
             DB::beginTransaction();
 
-            $mytime= Carbon::now('America/Costa_Rica');
+            $mytime= Carbon::now('America/Mexico_City');
 
             $venta = new Venta();
             $venta->idcliente = $request->idcliente;

@@ -315,17 +315,10 @@
                                             {{detalle.precio*detalle.cantidad}}
                                         </td>
                                     </tr>
-                                    <tr style="background-color: grey;">
-                                        <td colspan="3" align="right"><strong>Sub-Total:</strong></td>
-                                        <td><strong>USD$ {{subTotal=(total-subTotalImpuesto).toFixed(2)}}</strong></td>
-                                    </tr>
-                                    <tr style="background-color: grey;">
-                                        <td colspan="3" align="right"><strong>Impuesto:</strong></td>
-                                        <td><strong>USD$ {{subTotalImpuesto=((total*impuesto)).toFixed(2)}}</strong></td>
-                                    </tr>
+
                                     <tr style="background-color: grey;">
                                         <td colspan="3" align="right"><strong>Total:</strong></td>
-                                        <td><strong>USD$ {{total}}</strong></td>
+                                        <td><strong>$ {{total}}</strong></td>
                                     </tr>
                                 </tbody>
                                 <tbody v-else>
@@ -782,10 +775,38 @@
                 this.listado=1;
             },
 
-            verCompra(){
+            verCompra(id){
 
                 let me=this;
                 me.listado=2;
+
+                 //Obtener los datos de la compra
+                var arrayCompraT=[];
+                var url= '/compra/obtenerCabecera?id=' + id;
+
+                axios.get(url).then(function (response) {
+                    var respuesta= response.data;
+                    arrayCompraT = respuesta.compra;
+
+                    me.proveedor = arrayCompraT[0]['nombre'];
+                    me.num_compra=arrayCompraT[0]['num_compra'];
+                    me.total=arrayCompraT[0]['total'];
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+
+                //Obtener los datos de los detalles
+                var urld= '/compra/obtenerDetalles?id=' + id;
+
+                axios.get(urld).then(function (response) {
+                    console.log(response);
+                    var respuesta= response.data;
+                    me.arrayDetalle = respuesta.detalles;
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
 
             },
 

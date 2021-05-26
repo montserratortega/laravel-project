@@ -46,6 +46,31 @@ class CompraController extends Controller
         ];
     }
 
+    public function obtenerCabecera(Request $request){
+        if (!$request->ajax()) return redirect('/');
+
+        $id = $request->id;
+        $compra = Compra::join('proveedores','compras.idproveedor','=','proveedores.id')
+        ->join('users','compras.idusuario','=','users.id')
+        ->select('compras.id','compras.num_compra','compras.fecha_compra','compras.total',
+        'compras.estado','proveedores.nombre','users.usuario')
+        ->where('compras.id','=',$id)
+        ->orderBy('compras.id', 'desc')->take(1)->get();
+
+        return ['compra' => $compra];
+    }
+
+    public function obtenerDetalles(Request $request){
+        if (!$request->ajax()) return redirect('/');
+
+        $id = $request->id;
+        $detalles = DetalleCompra::join('productos','detalle_compras.idproducto','=','productos.id')
+        ->select('detalle_compras.cantidad','detalle_compras.precio','productos.nombre as producto')
+        ->where('detalle_compras.idcompra','=',$id)
+        ->orderBy('detalle_compras.id', 'desc')->get();
+
+        return ['detalles' => $detalles];
+    }
 
     public function store(Request $request)
     {
